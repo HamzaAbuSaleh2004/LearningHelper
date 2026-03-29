@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% block title %}{{ t('app_name') }} — {{ t('app_tagline') }}{% endblock %}
+
+{% block content %}
+{% if user %}
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- DASHBOARD (Logged-in view)                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="animate-fade-in">
+    <!-- Welcome -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-2">
+            {{ t('dashboard_welcome') }}, <span class="gradient-text">{{ user.name.split()[0] }}</span> 👋
+        </h1>
+        <p class="text-slate-400 text-sm">{{ t('app_tagline') }}</p>
+    </div>
+
+    <!-- ── Active Course Banner ── -->
+    {% set active_enr = None %}
+    {% for enr in user.enrolled_courses if not enr.completed %}
+        {% if active_enr is none %}{% set active_enr = enr %}{% endif %}
+    {% endfor %}
+    {% if active_enr %}
+    <div class="glass-card-strong p-6 mb-6 animate-fade-in-up border border-primary-500/20" id="active-course-banner">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-book-open text-white text-lg"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs text-primary-300 font-semibold mb-0.5">Currently Learning</p>
+                <h3 class="text-base font-bold text-white truncate">{{ active_enr.course_title }}</h3>
+                {% set plan = active_enr.study_plan %}
+                {% set done = plan|selectattr('checked')|list|length %}
+                {% set total_items = plan|length %}
+                {% set pct = ((done / total_items) * 100)|round|int if total_items > 0 else 0 %}
+                <div class="flex items-center gap-3 mt-2">
+                    <div class="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-500 transition-all" style="width: {{ pct }}%"></div>
+                    </div>
+                    <span class="text-xs font-mono text-primary-300">{{ pct }}%</span>
+                </div>
+            </div>
+            <a href="{{ url_for('plan', enrollment_id=active_enr.id) }}"
+               class="px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all flex-shrink-0">
+                <i class="fa-solid fa-arrow-right me-1"></i>Continue
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- ── Interest Radar (starts at 0) ── -->
+        <div class="lg:col-span-1 glass-card p-6 animate-fade-in-up" id="interest-radar" style="animation-delay: 0.1s">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-radar gradient-text text-xl">📊</i>
+                {{ t('dashboard_weights') }}
+            </h3>
+            <div class="flex justify-center mb-4">
+                <canvas id="radarChart" width="280" height="280"></canvas>
+            </div>
+            <div id="weight-bars" class="space-y-3">
+                {% for cat in categories %}
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid {{ category_icons[cat] }} text-primary-400"></i>
+                            {{ get_cat_display(cat) }}
+                        </span>
+                        <span class="text-xs font-mono text-primary-300">{{ (user.weights[cat] * 100)|round|int }}%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+                        <div class="progress-fill h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-500"
+                             style="width: 0%" data-width="{{ (user.weights[cat] * 100)|round|int }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if user.weights.values()|sum == 0 %}
+            <p class="text-xs text-slate-500 mt-3 text-center italic">Weights start at 0 and grow as you complete courses.</p>
+            {% endif %}
+        </div>
+
+        <!-- ── Quick Actions ── -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="quick-actions">
+                <a href="{{ url_for('search') }}" class="glass-card p-5 hover-lift group" id="action-search">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
+                            <i class="fa-solid fa-brain text-blue-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm">{{ t('nav_search') }}</h4>
+                            <p class="text-xs text-slate-400">Find courses with AI semantic search</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('recommend') }}" class="glass-card p-5 hover-lift group" id="action-recommend">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm">{{ t('nav_recommend') }}</h4>
+                            <p class="text-xs text-slate-400">{{ t('recommend_subtitle') }}</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('courses_page') }}" class="glass-card p-5 hover-lift group" id="action-courses">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center group-hover:bg-primary-500/30 transition-colors">
+                            <i class="fa-solid fa-book text-primary-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm">{{ t('nav_courses') }}</h4>
+                            <p class="text-xs text-slate-400">{{ t('courses_subtitle') }}</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('benefit') }}" class="glass-card p-5 hover-lift group" id="action-progress">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center group-hover:bg-accent-500/30 transition-colors">
+                            <i class="fa-solid fa-chart-line text-accent-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm">{{ t('nav_benefit') }}</h4>
+                            <p class="text-xs text-slate-400">View your learning progress</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ── Enrolled Courses ── -->
+            {% if user.enrolled_courses %}
+            <div class="glass-card p-6 animate-fade-in-up" id="enrolled-section" style="animation-delay: 0.2s">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-accent-400"></i>
+                    My Courses ({{ user.enrolled_courses|length }})
+                </h3>
+                <div class="space-y-3">
+                    {% for enr in user.enrolled_courses %}
+                    {% set plan = enr.study_plan %}
+                    {% set done = plan|selectattr('checked')|list|length %}
+                    {% set total_items = plan|length %}
+                    {% set pct = ((done / total_items) * 100)|round|int if total_items > 0 else 0 %}
+                    <a href="{{ url_for('plan', enrollment_id=enr.id) }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
+                            {% if enr.completed %}bg-accent-500/20 text-accent-400{% else %}bg-primary-500/20 text-primary-400{% endif %}">
+                            {% if enr.completed %}<i class="fa-solid fa-check text-xs"></i>{% else %}<i class="fa-solid fa-book-open text-xs"></i>{% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-300 truncate group-hover:text-white transition-colors">{{ enr.course_title }}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <div class="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
+                                    <div class="h-full rounded-full {% if enr.completed %}bg-accent-500{% else %}bg-primary-500{% endif %}" style="width: {{ pct }}%"></div>
+                                </div>
+                                <span class="text-[10px] font-mono {% if enr.completed %}text-accent-400{% else %}text-slate-500{% endif %}">
+                                    {% if enr.completed %}✅ Done{% else %}{{ pct }}%{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ── Badges ── -->
+            <div class="glass-card p-6 animate-fade-in-up" id="badges-section" style="animation-delay: 0.3s">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    🏆 {{ t('dashboard_badges') }}
+                </h3>
+                <div class="flex flex-wrap gap-4">
+                    {% for badge in badges %}
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                        {% if badge.earned %}badge-earned glass-card-strong{% else %}badge-locked glass-card{% endif %}"
+                        id="badge-{{ badge.key }}">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center
+                            {% if badge.earned %}bg-gradient-to-br from-primary-500 to-accent-500 text-white{% else %}bg-white/5 text-slate-600{% endif %}">
+                            <i class="fa-solid {{ badge.icon }}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold {% if not badge.earned %}text-slate-500{% endif %}">{{ t('badge_' + badge.key) }}</p>
+                            <p class="text-xs {% if badge.earned %}text-slate-400{% else %}text-slate-600{% endif %}">{{ t('badge_' + badge.key + '_desc') }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- HERO LANDING (Not logged in)                                -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="animate-fade-in">
+    <div class="text-center py-16 sm:py-24 relative" id="hero-section">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-300 text-xs font-medium mb-6 animate-fade-in-down">
+                <i class="fa-solid fa-sparkles"></i>
+                AI-Powered Learning
+            </div>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black mb-6 leading-tight animate-fade-in-up">
+                {{ t('hero_title') }}
+                <span class="block gradient-text mt-1">{{ t('hero_title_highlight') }}</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s">
+                {{ t('hero_subtitle') }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.3s">
+                <a href="{{ url_for('onboard') }}" id="hero-cta"
+                   class="px-8 py-4 rounded-2xl text-base font-bold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105">
+                    <i class="fa-solid fa-rocket {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('hero_cta') }}
+                </a>
+                <a href="{{ url_for('courses_page') }}" id="hero-explore"
+                   class="px-8 py-4 rounded-2xl text-base font-semibold glass-card text-slate-300 hover:text-white hover:bg-white/10 transition-all">
+                    <i class="fa-solid fa-compass {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('hero_explore') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-16" id="stats-section">
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up" style="animation-delay: 0.4s">
+            <div class="text-3xl font-black gradient-text mb-1">{{ stats.courses }}+</div>
+            <div class="text-xs text-slate-400">{{ t('stats_courses') }}</div>
+        </div>
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up" style="animation-delay: 0.5s">
+            <div class="text-3xl font-black gradient-text-accent mb-1">{{ stats.categories }}</div>
+            <div class="text-xs text-slate-400">{{ t('stats_categories') }}</div>
+        </div>
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up col-span-2 sm:col-span-1" style="animation-delay: 0.6s">
+            <div class="text-3xl font-black gradient-text mb-1">{{ stats.platforms }}</div>
+            <div class="text-xs text-slate-400">{{ t('stats_platforms') }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto" id="features-section">
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up" style="animation-delay: 0.7s">
+            <div class="w-14 h-14 rounded-2xl bg-primary-500/20 flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-user-gear text-primary-400 text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-sm mb-2">Personalized Profile</h3>
+            <p class="text-xs text-slate-400">Tell us your goals and level for tailored recommendations.</p>
+        </div>
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up" style="animation-delay: 0.8s">
+            <div class="w-14 h-14 rounded-2xl bg-accent-500/20 flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-brain text-accent-400 text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-sm mb-2">Smart RL Engine</h3>
+            <p class="text-xs text-slate-400">Our system learns from your course completions to improve suggestions.</p>
+        </div>
+        <div class="glass-card p-6 text-center hover-lift animate-fade-in-up" style="animation-delay: 0.9s">
+            <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-chart-line text-purple-400 text-2xl"></i>
+            </div>
+            <h3 class="font-bold text-sm mb-2">Track Progress</h3>
+            <p class="text-xs text-slate-400">Enroll, follow your study plan, and measure growth with assessments.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.dataset.width;
+            });
+        }, 300);
+    });
+
+    {% if user %}
+    (function() {
+        const canvas = document.getElementById('radarChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const cx = w / 2, cy = h / 2;
+        const r = Math.min(cx, cy) - 30;
+
+        fetch('/api/weights')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.labels, values = data.values, n = labels.length;
+                const angleStep = (2 * Math.PI) / n;
+
+                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                ctx.lineWidth = 1;
+                for (let level = 0.25; level <= 1; level += 0.25) {
+                    ctx.beginPath();
+                    for (let i = 0; i <= n; i++) {
+                        const angle = i * angleStep - Math.PI / 2;
+                        const x = cx + Math.cos(angle) * r * level;
+                        const y = cy + Math.sin(angle) * r * level;
+                        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath(); ctx.stroke();
+                }
+                for (let i = 0; i < n; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    ctx.beginPath(); ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+                    ctx.stroke();
+                }
+
+                const gradient = ctx.createLinearGradient(0, 0, w, h);
+                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.3)');
+                ctx.fillStyle = gradient;
+                ctx.strokeStyle = 'rgba(99, 102, 241, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let i = 0; i < n; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const val = Math.max(values[i], 0.02); // tiny minimum so polygon is visible
+                    const x = cx + Math.cos(angle) * r * val;
+                    const y = cy + Math.sin(angle) * r * val;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = '10px Inter, Tajawal, sans-serif';
+                ctx.textAlign = 'center';
+                for (let i = 0; i < n; i++) {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const val = Math.max(values[i], 0.02);
+                    const px = cx + Math.cos(angle) * r * val;
+                    const py = cy + Math.sin(angle) * r * val;
+                    ctx.beginPath(); ctx.arc(px, py, 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#6366f1'; ctx.fill();
+                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                    const lx = cx + Math.cos(angle) * (r + 18);
+                    const ly = cy + Math.sin(angle) * (r + 18);
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillText(labels[i], lx, ly + 3);
+                }
+            }).catch(() => {});
+    })();
+    {% endif %}
+</script>
+{% endblock %}

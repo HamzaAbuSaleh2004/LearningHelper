@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}{{ t('feedback_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mx-auto mb-4 animate-scale-in">
+            <i class="fa-solid fa-star text-white text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">{{ t('feedback_title') }}</h1>
+        <p class="text-slate-400">{{ t('feedback_subtitle') }}</p>
+    </div>
+
+    <!-- Course Info Card -->
+    <div class="glass-card-strong p-6 mb-6 animate-fade-in-up" id="course-info">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500/20 to-accent-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid {{ category_icons.get(course.category, 'fa-book') }} text-primary-400 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-white mb-1">{{ course.title }}</h3>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                    <span class="px-2 py-0.5 rounded-md {% if course.platform == 'coursera' %}bg-blue-500/20 text-blue-300{% else %}bg-purple-500/20 text-purple-300{% endif %} font-bold uppercase tracking-wider">
+                        {{ course.platform }}
+                    </span>
+                    <span>{{ get_cat_display(course.category) }}</span>
+                    <span>•</span>
+                    <span>{{ course.level }}</span>
+                    {% if course.rating %}
+                    <span>•</span>
+                    <span class="flex items-center gap-0.5">
+                        <i class="fa-solid fa-star text-yellow-400"></i>
+                        {{ course.rating }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Form -->
+    <div class="glass-card-strong p-8 text-center animate-fade-in-up" style="animation-delay: 0.1s" id="rating-form-card">
+        <form method="POST" action="{{ url_for('feedback') }}" id="feedback-form">
+            <input type="hidden" name="course_id" value="{{ course.id }}">
+            <input type="hidden" name="course_title" value="{{ course.title }}">
+            <input type="hidden" name="course_category" value="{{ course.category }}">
+
+            <p class="text-sm text-slate-300 mb-6">{{ t('rating_label') }}</p>
+
+            <!-- Star Rating -->
+            <div class="star-rating mb-8" id="star-rating">
+                <input type="radio" name="rating" value="5" id="star5" required>
+                <label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+                <input type="radio" name="rating" value="4" id="star4">
+                <label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+                <input type="radio" name="rating" value="3" id="star3">
+                <label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+                <input type="radio" name="rating" value="2" id="star2">
+                <label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+                <input type="radio" name="rating" value="1" id="star1">
+                <label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+            </div>
+
+            <!-- Rating description -->
+            <div id="rating-desc" class="text-sm text-slate-400 mb-6 h-6 transition-all"></div>
+
+            <!-- Weight Impact Preview -->
+            <div id="weight-impact" class="glass-card p-4 mb-6 text-xs text-slate-400 hidden">
+                <div class="flex items-center justify-center gap-2">
+                    <i class="fa-solid {{ category_icons.get(course.category, 'fa-chart-bar') }} text-primary-400"></i>
+                    <span>{{ get_cat_display(course.category) }} weight:</span>
+                    <span id="impact-value" class="font-bold"></span>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" id="submit-feedback"
+                    class="px-8 py-3 rounded-2xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-400 hover:to-orange-400 hover:scale-105 transition-all shadow-lg shadow-yellow-500/25 active:scale-95">
+                <i class="fa-solid fa-paper-plane {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('btn_rate') }}
+            </button>
+        </form>
+    </div>
+
+    <!-- Back -->
+    <div class="text-center mt-6">
+        <a href="{{ url_for('recommend') }}" class="text-sm text-slate-400 hover:text-white transition-colors">
+            <i class="fa-solid fa-arrow-left {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('btn_back') }}
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const descriptions = {
+        1: '😞 Poor — Not helpful at all',
+        2: '😕 Below Average — Somewhat lacking',
+        3: '😐 Average — It was okay',
+        4: '😊 Good — Quite useful',
+        5: '🤩 Excellent — Highly recommended!'
+    };
+
+    const impacts = {
+        1: '-0.10 ↓',
+        2: '-0.05 ↓',
+        3: '±0.00',
+        4: '+0.05 ↑',
+        5: '+0.10 ↑'
+    };
+
+    const impactColors = {
+        1: 'text-red-400',
+        2: 'text-red-300',
+        3: 'text-slate-400',
+        4: 'text-accent-300',
+        5: 'text-accent-400'
+    };
+
+    document.querySelectorAll('#star-rating input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const val = parseInt(e.target.value);
+            document.getElementById('rating-desc').textContent = descriptions[val] || '';
+            
+            const impactEl = document.getElementById('weight-impact');
+            const impactVal = document.getElementById('impact-value');
+            impactEl.classList.remove('hidden');
+            impactVal.textContent = impacts[val] || '';
+            impactVal.className = 'font-bold ' + (impactColors[val] || '');
+        });
+    });
+</script>
+{% endblock %}

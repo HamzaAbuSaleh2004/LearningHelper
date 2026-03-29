@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ t('result_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto animate-fade-in">
+    <!-- Score Hero -->
+    <div class="glass-card-strong p-8 text-center mb-8 animate-scale-in" id="score-hero">
+        <div class="relative w-32 h-32 mx-auto mb-6">
+            <!-- Circular progress ring -->
+            <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="54" fill="none"
+                        stroke="url(#scoreGrad)" stroke-width="8"
+                        stroke-linecap="round"
+                        stroke-dasharray="{{ 339.3 }}"
+                        stroke-dashoffset="{{ 339.3 - (339.3 * score / 100) }}"
+                        class="transition-all duration-[2s] ease-out"
+                        id="score-ring"/>
+                <defs>
+                    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#6366f1"/>
+                        <stop offset="100%" stop-color="#10b981"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-4xl font-black gradient-text" id="score-number">{{ score }}%</span>
+            </div>
+        </div>
+        <h1 class="text-2xl font-bold mb-2">{{ t('result_title') }}</h1>
+        <p class="text-slate-400 text-sm">
+            {{ t('result_correct') }}: <span class="text-white font-bold">{{ correct }}</span> / {{ total }}
+        </p>
+        <p class="text-sm mt-3 {% if score >= 60 %}text-accent-400{% elif score >= 40 %}text-yellow-400{% else %}text-red-400{% endif %}">
+            {% if score >= 80 %}🏆 Excellent!{% elif score >= 60 %}👍 Good job!{% elif score >= 40 %}📚 Keep learning!{% else %}💪 Don't give up!{% endif %}
+        </p>
+    </div>
+
+    <!-- Answer Review -->
+    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-primary-400"></i>
+        Answer Review
+    </h2>
+    <div class="space-y-3 mb-8">
+        {% for ans in answers %}
+        <div class="glass-card p-4 flex items-start gap-3 animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s" id="review-{{ loop.index0 }}">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5
+                {% if ans.is_correct %}bg-accent-500/20 text-accent-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                <i class="fa-solid {% if ans.is_correct %}fa-check{% else %}fa-xmark{% endif %}"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-slate-200 mb-1">{{ ans.question }}</p>
+                {% if not ans.is_correct %}
+                <p class="text-xs text-red-400/70">Your answer: {{ ans.selected_text }}</p>
+                <p class="text-xs text-accent-400/70">Correct: {{ ans.correct_text }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Next Steps -->
+    <div class="text-center space-y-4 animate-fade-in-up" style="animation-delay: 0.5s">
+        {% if test_type == 'pre' %}
+        <p class="text-sm text-slate-400 mb-4">Pre-assessment complete! Now follow your study plan.</p>
+        <a href="{{ url_for('plan', enrollment_id=enrollment_id) }}" class="inline-block px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:scale-105 transition-all shadow-lg shadow-primary-500/25">
+            <i class="fa-solid fa-list-check {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>Go to Study Plan
+        </a>
+        {% else %}
+        <p class="text-sm text-slate-400 mb-4">{{ t('result_post_done') }}</p>
+        <a href="{{ url_for('benefit') }}" class="inline-block px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-accent-600 to-accent-500 text-white hover:scale-105 transition-all shadow-lg shadow-accent-500/25">
+            <i class="fa-solid fa-chart-line {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('btn_view_results') }}
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ t('test_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br {% if test_type == 'pre' %}from-primary-500 to-blue-500{% else %}from-accent-500 to-teal-500{% endif %} flex items-center justify-center mx-auto mb-4 animate-scale-in">
+            <i class="fa-solid {% if test_type == 'pre' %}fa-clipboard-check{% else %}fa-graduation-cap{% endif %} text-white text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">{{ t('test_title') }}</h1>
+        <p class="text-slate-400">
+            {% if test_type == 'pre' %}{{ t('test_subtitle_pre') }}{% else %}{{ t('test_subtitle_post') }}{% endif %}
+        </p>
+    </div>
+
+    <!-- Test Form -->
+    <form method="POST" action="{{ url_for('submit_test') }}" id="test-form">
+        <input type="hidden" name="test_type" value="{{ test_type }}">
+        <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
+
+        {% for q in questions %}
+        {% set qi = loop.index0 %}
+        <div class="glass-card-strong p-6 mb-4 animate-fade-in-up question-card" style="animation-delay: {{ loop.index0 * 0.1 }}s" id="question-{{ loop.index0 }}">
+            <!-- Question Header -->
+            <div class="flex items-center gap-3 mb-4">
+                <span class="w-8 h-8 rounded-lg bg-gradient-to-br {% if test_type == 'pre' %}from-primary-500/20{% else %}from-accent-500/20{% endif %} flex items-center justify-center text-sm font-bold {% if test_type == 'pre' %}text-primary-300{% else %}text-accent-300{% endif %}">
+                    {{ loop.index }}
+                </span>
+                <span class="text-xs text-slate-500 font-medium">{{ t('test_question') }} {{ loop.index }} {{ t('test_of') }} {{ questions|length }}</span>
+            </div>
+
+            <!-- Question Text -->
+            <h3 class="text-base font-semibold mb-4 text-slate-200">{{ q.q }}</h3>
+
+            <!-- Options -->
+            <div class="space-y-2">
+                {% for option in q.options %}
+                <label class="option-label flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-all group"
+                       for="q{{ qi }}_{{ loop.index0 }}">
+                    <input type="radio" name="q{{ qi }}" value="{{ loop.index0 }}"
+                           id="q{{ qi }}_{{ loop.index0 }}"
+                           class="w-4 h-4 border-2 border-white/20 bg-transparent text-primary-500 focus:ring-primary-400/30 focus:ring-offset-0 accent-indigo-500"
+                           required>
+                    <span class="text-sm text-slate-300 group-hover:text-white transition-colors">{{ option }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Submit -->
+        <div class="text-center mt-6 animate-fade-in-up" style="animation-delay: {{ questions|length * 0.1 }}s">
+            <button type="submit" id="submit-test"
+                    class="px-10 py-4 rounded-2xl text-base font-bold bg-gradient-to-r {% if test_type == 'pre' %}from-primary-600 to-primary-500 shadow-primary-500/25 hover:shadow-primary-500/40{% else %}from-accent-600 to-accent-500 shadow-accent-500/25 hover:shadow-accent-500/40{% endif %} text-white hover:scale-105 transition-all shadow-lg active:scale-95">
+                <i class="fa-solid fa-paper-plane {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>
+                {{ t('test_submit') }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Highlight selected option
+    document.querySelectorAll('.option-label input').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            // Clear siblings
+            const card = e.target.closest('.question-card');
+            card.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('border-primary-500/40', 'bg-primary-500/10');
+            });
+            // Highlight selected
+            const label = e.target.closest('.option-label');
+            label.classList.add('border-primary-500/40', 'bg-primary-500/10');
+        });
+    });
+</script>
+{% endblock %}

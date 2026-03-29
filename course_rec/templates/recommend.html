@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}{{ t('recommend_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-primary-500 flex items-center justify-center mx-auto mb-4 animate-scale-in">
+            <i class="fa-solid fa-wand-magic-sparkles text-white text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">{{ t('recommend_title') }}</h1>
+        <p class="text-slate-400">{{ t('recommend_subtitle') }}</p>
+        {% if top_category %}
+        <div class="inline-flex items-center gap-2 mt-3 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-300 text-xs font-medium">
+            <i class="fa-solid {{ category_icons.get(top_category, 'fa-star') }}"></i>
+            {{ t('recommend_based_on') }} {{ get_cat_display(top_category) }}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if recommendations %}
+    <!-- Course Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="recommendations-grid">
+        {% for course in recommendations %}
+        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="rec-card-{{ loop.index0 }}">
+            <!-- Top accent bar -->
+            <div class="h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-accent-500"></div>
+
+            <div class="p-5">
+                <!-- Platform & Category badges -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider
+                            {% if course.platform == 'coursera' %}bg-blue-500/20 text-blue-300{% else %}bg-purple-500/20 text-purple-300{% endif %}">
+                            {{ course.platform }}
+                        </span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-white/5 text-slate-400">
+                            {{ get_cat_display(course.category) }}
+                        </span>
+                    </div>
+                    <span class="text-xs font-mono text-primary-300 bg-primary-500/10 px-2 py-0.5 rounded-md">
+                        {{ (course.rec_score * 100)|round|int }}% match
+                    </span>
+                </div>
+
+                <!-- Title -->
+                <a href="{{ url_for('course_detail', course_id=course.id) }}" class="block">
+                    <h3 class="text-sm font-bold text-white mb-3 line-clamp-2 min-h-[2.5rem] hover:text-primary-300 transition-colors">{{ course.title }}</h3>
+                </a>
+
+                <!-- Meta -->
+                <div class="flex items-center gap-4 text-xs text-slate-400 mb-4">
+                    <span class="flex items-center gap-1">
+                        <i class="fa-solid fa-signal text-accent-400"></i>
+                        {{ course.level }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="fa-solid fa-star text-yellow-400"></i>
+                        {{ course.rating }}
+                    </span>
+                    {% if course.price %}
+                    <span class="flex items-center gap-1">
+                        <i class="fa-solid fa-tag text-primary-300"></i>
+                        {{ course.price }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2">
+                    <a href="{{ url_for('course_detail', course_id=course.id) }}"
+                       class="flex-1 py-2 rounded-lg text-xs font-semibold text-center bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all">
+                        <i class="fa-solid fa-eye {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="glass-card-strong p-12 text-center animate-fade-in-up" id="empty-state">
+        <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-wand-magic-sparkles text-slate-500 text-3xl"></i>
+        </div>
+        <p class="text-slate-400 text-base mb-6">{{ t('recommend_empty') }}</p>
+        <a href="{{ url_for('onboard') }}" class="inline-block px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:scale-105 transition-all shadow-lg">
+            <i class="fa-solid fa-user-plus {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('nav_onboard') }}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

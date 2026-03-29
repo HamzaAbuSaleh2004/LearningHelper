@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Roadmap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding-bottom: 50px;
+        }
+
+        .header-section {
+            background: white;
+            padding: 2rem 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1.5rem;
+            border-radius: 1rem 1rem 0 0 !important;
+        }
+
+        .task-checkbox:checked+label {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-section text-center">
+        <div class="container">
+            <h1 class="fw-bold"><i class="fa-solid fa-map-location-dot text-primary"></i> Your AI Strategy</h1>
+            <p class="text-muted">A personalized plan powered by Llama 3</p>
+            <a href="/" class="btn btn-outline-secondary btn-sm rounded-pill px-4">Start Over</a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="fw-bold m-0 text-primary"><i class="fa-solid fa-diagram-project me-2"></i>Learning Path
+                    Visualization</h4>
+            </div>
+            <div class="card-body p-4 bg-white overflow-auto">
+                <div class="mermaid">
+                    {{ ai_data.mermaid_syntax | safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="fw-bold m-0 text-success"><i class="fa-solid fa-list-check me-2"></i>Weekly Action Plan</h4>
+            </div>
+            <div class="card-body p-0">
+                {% if ai_data.study_schedule %}
+                {% for week in ai_data.study_schedule %}
+                <div class="p-4 border-bottom">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                            style="width: 40px; height: 40px; font-weight: bold;">
+                            {{ week.week }}
+                        </div>
+                        <h5 class="fw-bold m-0">{{ week.topic }}</h5>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        {% for task in week.tasks %}
+                        <li class="list-group-item border-0 px-0 py-2 d-flex gap-3">
+                            <input class="form-check-input task-checkbox flex-shrink-0" type="checkbox"
+                                id="week{{week.week}}-task{{loop.index}}">
+                            <label class="form-check-label" for="week{{week.week}}-task{{loop.index}}">
+                                {{ task }}
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="p-5 text-center text-danger">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i>
+                    <h4>Oops! The AI Schedule generation failed.</h4>
+                    <p>Please try again with a different description.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

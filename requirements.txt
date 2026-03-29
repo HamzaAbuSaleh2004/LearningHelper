@@ -1,0 +1,8 @@
+# List of all libraries needed
+torch
+transformers
+pandas
+numpy
+scikit-learn
+tqdm
+flask

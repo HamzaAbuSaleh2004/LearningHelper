@@ -1,0 +1,13 @@
+# Files to ignore (e.g., venv, __pycache__)
+__pycache__/
+*.pyc
+venv/
+capenv/
+.env
+.DS_Store
+.ipynb_checkpoints/
+OllamaSetup.exe
+models/
+course_rec/courses_cache.json
+course_rec/db.json
+data/

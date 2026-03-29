@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}{{ t('search_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-primary-500 flex items-center justify-center mx-auto mb-4 animate-scale-in">
+            <i class="fa-solid fa-brain text-white text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">{{ t('search_title') }}</h1>
+        <p class="text-slate-400">{{ t('search_subtitle') }}</p>
+        {% if sbert_available %}
+        <div class="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-300 text-xs font-medium">
+            <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse-slow"></span>
+            {{ t('search_sbert_badge') }}
+        </div>
+        {% else %}
+        <div class="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs font-medium">
+            <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+            {{ t('sbert_unavailable') }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Search Form -->
+    <div class="max-w-3xl mx-auto mb-8 animate-fade-in-up">
+        <form method="POST" action="{{ url_for('search') }}" class="glass-card-strong p-6" id="search-form">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute {{ 'right-4' if lang == 'ar' else 'left-4' }} top-1/2 -translate-y-1/2 text-primary-400"></i>
+                    <input type="text" name="search_query" value="{{ search_query }}"
+                           placeholder="{{ t('search_placeholder_ai') }}" required
+                           class="w-full {{ 'pr-12 pl-4' if lang == 'ar' else 'pl-12 pr-4' }} py-4 rounded-xl bg-white/5 border border-white/10 text-white text-base placeholder-slate-500 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all"
+                           id="search-input">
+                </div>
+                <select name="level"
+                        class="px-4 py-4 rounded-xl bg-white/5 border border-white/10 text-slate-300 focus:outline-none focus:border-primary-400 transition-all appearance-none cursor-pointer sm:max-w-[160px]">
+                    <option value="All Levels" {% if selected_level == 'All Levels' %}selected{% endif %} class="bg-slate-800">All Levels</option>
+                    <option value="Beginner Level" {% if selected_level == 'Beginner Level' %}selected{% endif %} class="bg-slate-800">{{ t('level_beginner') }}</option>
+                    <option value="Intermediate Level" {% if selected_level == 'Intermediate Level' %}selected{% endif %} class="bg-slate-800">{{ t('level_intermediate') }}</option>
+                    <option value="Expert Level" {% if selected_level == 'Expert Level' %}selected{% endif %} class="bg-slate-800">{{ t('level_advanced') }}</option>
+                </select>
+                <button type="submit" id="search-submit"
+                        class="px-8 py-4 rounded-xl font-bold bg-gradient-to-r from-primary-600 to-blue-500 text-white hover:from-primary-500 hover:to-blue-400 transition-all shadow-lg shadow-primary-500/25 hover:scale-105 active:scale-95 flex-shrink-0">
+                    <i class="fa-solid fa-magnifying-glass {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if search_query %}
+    <!-- Results Header -->
+    <div class="max-w-5xl mx-auto mb-4 animate-fade-in-up" style="animation-delay: 0.1s">
+        <p class="text-sm text-slate-400">
+            {{ t('search_results_for') }}: "<span class="text-white font-semibold">{{ search_query }}</span>"
+            <span class="text-xs text-slate-500 {{ 'ms-2' if lang == 'ar' else 'ml-2' }}">{{ recommendations|length }} results</span>
+        </p>
+    </div>
+    {% endif %}
+
+    {% if recommendations %}
+    <!-- Results Grid -->
+    <div class="max-w-5xl mx-auto space-y-4" id="search-results">
+        {% for course in recommendations %}
+        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="result-{{ loop.index0 }}">
+            <div class="flex flex-col sm:flex-row">
+                <!-- Score indicator -->
+                <div class="sm:w-28 p-4 flex sm:flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-500/10 to-accent-500/10 border-b sm:border-b-0 sm:border-{{ 'l' if lang == 'ar' else 'r' }} border-white/5">
+                    <div class="text-2xl font-black gradient-text">{{ (course.score * 100)|round|int }}%</div>
+                    <div class="text-[10px] text-slate-400 font-medium">{{ t('search_match') }}</div>
+                    {% if course.rl_boost is defined and course.rl_boost %}
+                    <div class="text-[9px] text-accent-400 flex items-center gap-1">
+                        <i class="fa-solid fa-brain"></i>
+                        RL: {{ course.rl_boost }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 p-5">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-base font-bold text-white mb-2">{{ course.course_title }}</h3>
+                            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
+                                <span class="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-bold uppercase tracking-wider text-[10px]">
+                                    Udemy
+                                </span>
+                                {% if course.level %}
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-signal text-accent-400"></i>
+                                    {{ course.level }}
+                                </span>
+                                {% endif %}
+                                {% if course.subject %}
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-tag text-primary-300"></i>
+                                    {{ course.subject }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-col gap-2 flex-shrink-0">
+                            {% if course.url %}
+                            <a href="{% if course.url.startswith('/') %}https://www.udemy.com{{ course.url }}{% else %}{{ course.url }}{% endif %}" target="_blank" rel="noopener"
+                               class="px-4 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all text-center">
+                                <i class="fa-solid fa-external-link {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('view_course') }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Match Bar -->
+                    <div class="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <div class="progress-fill h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-500"
+                             style="width: 0%" data-width="{{ (course.score * 100)|round|int }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif search_query %}
+    <!-- No Results -->
+    <div class="max-w-3xl mx-auto glass-card-strong p-12 text-center animate-fade-in-up" id="no-results">
+        <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-magnifying-glass text-slate-500 text-3xl"></i>
+        </div>
+        <p class="text-slate-400 text-base">{{ t('search_no_results') }}</p>
+    </div>
+    {% else %}
+    <!-- Initial state prompt -->
+    <div class="max-w-3xl mx-auto text-center py-12 animate-fade-in-up" style="animation-delay: 0.2s">
+        <div class="text-slate-600 mb-4">
+            <i class="fa-solid fa-arrow-up text-3xl animate-bounce-slow text-primary-500/30"></i>
+        </div>
+        <p class="text-slate-500 text-sm">Enter a query above to search with AI semantic matching</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Animate progress bars
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.dataset.width;
+            });
+        }, 500);
+    });
+</script>
+{% endblock %}

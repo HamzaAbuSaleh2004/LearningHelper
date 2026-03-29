@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Course Navigator</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4F46E5;
+            /* Indigo */
+            --secondary-color: #10B981;
+            /* Emerald */
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: #333;
+            padding-bottom: 80px;
+            /* Space for sticky footer */
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: white;
+            padding: 3rem 1rem;
+            border-radius: 0 0 2rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            background: linear-gradient(to right, #4F46E5, #8B5CF6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Search Box */
+        .form-control-lg {
+            border-radius: 50px;
+            padding-left: 1.5rem;
+            border: 2px solid #e0e0e0;
+        }
+
+        .form-control-lg:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Card Styling */
+        .course-card {
+            border: none;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            transition: transform 0.2s;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* Checkbox Header Area */
+        .card-header-custom {
+            background: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+        }
+
+        /* Custom Checkbox */
+        .form-check-input {
+            cursor: pointer;
+            width: 1.3em;
+            height: 1.3em;
+        }
+
+        .match-badge {
+            background-color: #ECFDF5;
+            color: var(--secondary-color);
+            font-weight: 700;
+            padding: 0.35em 0.8em;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h4 class="mt-3 fw-bold text-secondary">AI is analyzing courses...</h4>
+    </div>
+
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 hero-title"><i class="fa-solid fa-robot"></i> AI Course Navigator</h1>
+            <p class="lead text-muted mb-4">Find the best courses and generate a personalized schedule.</p>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form method="POST" action="/" onsubmit="showLoading()">
+                        <div class="input-group input-group-lg">
+                            <input type="text" name="search_query" class="form-control"
+                                placeholder="e.g. I want to learn Python for Data Science..." value="{{ search_query }}"
+                                required>
+
+                            <select name="level" class="form-select" style="max-width: 150px;">
+                                <option value="All Levels" {% if selected_level=='All Levels' %}selected{% endif %}>All
+                                    Levels</option>
+                                <option value="Beginner Level" {% if selected_level=='Beginner Level' %}selected{% endif
+                                    %}>Beginner</option>
+                                <option value="Intermediate Level" {% if selected_level=='Intermediate Level'
+                                    %}selected{% endif %}>Intermediate</option>
+                                <option value="Expert Level" {% if selected_level=='Expert Level' %}selected{% endif %}>
+                                    Expert</option>
+                            </select>
+
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa-solid fa-magnifying-glass"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        {% if request.method == 'POST' %}
+
+        {% if recommendations %}
+        <form action="/personalize" method="POST">
+
+            <h3 class="mb-4 text-center fw-bold">
+                Found {{ recommendations|length }} matches for "<span class="text-primary">{{ search_query }}</span>"
+            </h3>
+
+            <div class="row g-4 mb-5">
+                {% for course in recommendations %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="course-card shadow-sm h-100">
+
+                        <div class="card-header-custom d-flex align-items-center gap-2">
+                            <input class="form-check-input" type="checkbox" name="selected_courses"
+                                value="{{ course.course_title }}" checked>
+                            <span class="fw-bold">Select this course</span>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-dark">{{ course.course_title }}</h5>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-secondary">{{ course.level }}</span>
+                                <span class="match-badge">
+                                    <i class="fa-solid fa-check-circle"></i> {{ (course.score * 100) | round }}% Match
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted small">
+                                <i class="fa-solid fa-book-open me-2"></i> Subject: <strong>{{ course.subject
+                                    }}</strong>
+                            </p>
+
+                            <div class="alert alert-light border mt-3 p-2 small">
+                                <i class="fa-solid fa-lightbulb text-warning"></i>
+                                <strong>AI Reason:</strong> High semantic match for {{ course.subject }}.
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            <a href="{{ course.url }}" target="_blank"
+                                class="btn btn-outline-primary w-100 btn-sm rounded-pill">
+                                View on Udemy <i class="fa-solid fa-external-link-alt ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="fixed-bottom p-3 bg-white shadow-lg border-top text-center">
+                <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow">
+                    Next: Personalize Schedule <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </form>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fa-regular fa-folder-open fa-4x text-muted mb-3"></i>
+            <h3 class="text-muted">No courses found.</h3>
+            <p>Try searching for a broader topic or selecting "All Levels".</p>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5 opacity-50">
+            <i class="fa-solid fa-arrow-up fa-3x mb-3 text-primary"></i>
+            <h4>Enter a topic above to start</h4>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showLoading() {
+            const query = document.querySelector('input[name="search_query"]').value;
+            if (query.trim() !== "") {
+                document.getElementById('loading-overlay').style.display = 'flex';
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

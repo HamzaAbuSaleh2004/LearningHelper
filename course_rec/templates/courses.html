@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ t('courses_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold mb-1">{{ t('courses_title') }}</h1>
+            <p class="text-slate-400 text-sm">{{ t('courses_subtitle') }}</p>
+        </div>
+        <form method="POST" action="{{ url_for('scrape') }}" class="flex-shrink-0">
+            <button type="submit" id="refresh-courses"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold glass-card text-primary-300 hover:text-white hover:bg-primary-500/20 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-rotate"></i>{{ t('btn_scrape') }}
+            </button>
+        </form>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-card p-4 mb-6 animate-fade-in-down" id="course-filters">
+        <form method="GET" action="{{ url_for('courses_page') }}" class="flex flex-col sm:flex-row gap-3">
+            <!-- Search -->
+            <div class="flex-1 relative">
+                <i class="fa-solid fa-search absolute {{ 'right-3' if lang == 'ar' else 'left-3' }} top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                <input type="text" name="q" value="{{ search_query }}"
+                       placeholder="{{ t('search_placeholder') }}"
+                       class="w-full {{ 'pr-10 pl-4' if lang == 'ar' else 'pl-10 pr-4' }} py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-primary-400 transition-all">
+            </div>
+
+            <!-- Category Filter -->
+            <select name="category" onchange="this.form.submit()"
+                    class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-300 focus:outline-none focus:border-primary-400 transition-all appearance-none cursor-pointer">
+                <option value="" class="bg-slate-800">{{ t('courses_filter_all') }}</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %} class="bg-slate-800">
+                    {{ get_cat_display(cat) }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- Platform Filter -->
+            <select name="platform" onchange="this.form.submit()"
+                    class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-300 focus:outline-none focus:border-primary-400 transition-all appearance-none cursor-pointer">
+                <option value="" class="bg-slate-800">{{ t('courses_filter_platform') }}</option>
+                {% for p in platforms %}
+                <option value="{{ p }}" {% if current_platform == p %}selected{% endif %} class="bg-slate-800">
+                    {{ p|capitalize }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- Search button -->
+            <button type="submit" class="px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-500 transition-all flex-shrink-0">
+                <i class="fa-solid fa-filter {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Results count -->
+    <div class="text-xs text-slate-500 mb-4">
+        {{ courses|length }} courses found
+    </div>
+
+    {% if courses %}
+    <!-- Course Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="courses-grid">
+        {% for course in courses %}
+        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up" style="animation-delay: {{ (loop.index0 % 8) * 0.05 }}s" id="course-{{ loop.index0 }}">
+            <!-- Color accent -->
+            <div class="h-1 {% if course.platform == 'coursera' %}bg-gradient-to-r from-blue-500 to-blue-400{% else %}bg-gradient-to-r from-purple-500 to-purple-400{% endif %}"></div>
+
+            <div class="p-4">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider
+                        {% if course.platform == 'coursera' %}bg-blue-500/20 text-blue-300{% else %}bg-purple-500/20 text-purple-300{% endif %}">
+                        {{ course.platform }}
+                    </span>
+                    <div class="flex items-center gap-1 text-xs">
+                        <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                        <span class="text-yellow-300 font-medium">{{ course.rating }}</span>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <a href="{{ url_for('course_detail', course_id=course.id) }}" class="block">
+                    <h3 class="text-xs font-bold text-white mb-2 line-clamp-2 min-h-[2rem] hover:text-primary-300 transition-colors">{{ course.title }}</h3>
+                </a>
+
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                    <span class="px-1.5 py-0.5 rounded text-[9px] bg-white/5 text-slate-400">
+                        <i class="fa-solid {{ category_icons.get(course.category, 'fa-tag') }} {{ 'ms-0.5' if lang == 'ar' else 'me-0.5' }}"></i>
+                        {{ get_cat_display(course.category) }}
+                    </span>
+                    <span class="px-1.5 py-0.5 rounded text-[9px] bg-white/5 text-slate-400">
+                        {{ course.level }}
+                    </span>
+                    {% if course.price %}
+                    <span class="px-1.5 py-0.5 rounded text-[9px] {% if course.price == 'Free' %}bg-accent-500/20 text-accent-300{% else %}bg-white/5 text-slate-400{% endif %} font-medium">
+                        {{ course.price }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2">
+                    <a href="{{ url_for('course_detail', course_id=course.id) }}"
+                       class="flex-1 py-1.5 rounded-lg text-[10px] font-semibold text-center bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all">
+                        <i class="fa-solid fa-eye {{ 'ms-0.5' if lang == 'ar' else 'me-0.5' }}"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="glass-card-strong p-12 text-center animate-fade-in-up" id="no-courses">
+        <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-book-open text-slate-500 text-3xl"></i>
+        </div>
+        <p class="text-slate-400 text-base mb-6">{{ t('courses_no_results') }}</p>
+        <form method="POST" action="{{ url_for('scrape') }}">
+            <button type="submit" class="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:scale-105 transition-all shadow-lg">
+                <i class="fa-solid fa-rotate {{ 'ms-2' if lang == 'ar' else 'me-2' }}"></i>{{ t('btn_scrape') }}
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

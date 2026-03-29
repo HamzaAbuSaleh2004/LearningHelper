@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LearnPath AI — Intelligent Course Recommendation System with personalized learning paths.">
+    <title>{% block title %}{{ t('app_name') }}{% endblock %}</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe',
+                            300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1',
+                            600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81',
+                        },
+                        accent: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0',
+                            300: '#6ee7b7', 400: '#34d399', 500: '#10b981',
+                            600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b',
+                        },
+                        glass: {
+                            light: 'rgba(255, 255, 255, 0.08)',
+                            medium: 'rgba(255, 255, 255, 0.12)',
+                            heavy: 'rgba(255, 255, 255, 0.18)',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'fade-in-down': 'fadeInDown 0.5s ease-out',
+                        'slide-in-left': 'slideInLeft 0.5s ease-out',
+                        'slide-in-right': 'slideInRight 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 2s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        fadeInDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideInLeft: { '0%': { opacity: '0', transform: 'translateX(-30px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(30px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.9)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-20px)' } },
+                        gradient: { '0%, 100%': { backgroundPosition: '0% 50%' }, '50%': { backgroundPosition: '100% 50%' } },
+                    },
+                    backdropBlur: { xs: '2px' },
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts: Inter + Tajawal (Arabic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Base dark theme */
+        body {
+            background: #0f0f1a;
+            color: #e2e8f0;
+            font-family: 'Inter', 'Tajawal', sans-serif;
+        }
+
+        /* Glassmorphism card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+        }
+
+        .glass-card-strong {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1rem;
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-accent {
+            background: linear-gradient(135deg, #34d399, #10b981, #6ee7b7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Animated gradient background */
+        .bg-animated-gradient {
+            background: linear-gradient(-45deg, #0f0f1a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .orb-1 { width: 300px; height: 300px; background: #6366f1; top: 10%; left: 10%; animation: float 8s ease-in-out infinite; }
+        .orb-2 { width: 200px; height: 200px; background: #10b981; top: 60%; right: 15%; animation: float 6s ease-in-out 2s infinite; }
+        .orb-3 { width: 250px; height: 250px; background: #a78bfa; bottom: 10%; left: 40%; animation: float 7s ease-in-out 1s infinite; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f0f1a; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+
+        /* Star rating */
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 4px; }
+        .star-rating input { display: none; }
+        .star-rating label {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #334155;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        /* Progress bar animation */
+        .progress-fill {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Hover lift */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        /* RTL overrides */
+        [dir="rtl"] .star-rating { flex-direction: row; }
+        [dir="rtl"] .fa-arrow-right:before { content: "\f060"; }
+        [dir="rtl"] .fa-arrow-left:before { content: "\f061"; }
+
+        /* Mobile nav */
+        .mobile-nav { display: none; }
+        @media (max-width: 768px) {
+            .desktop-nav { display: none; }
+            .mobile-nav { display: flex; }
+        }
+
+        /* Typewriter effect */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #6366f1;
+            animation: typing 3s steps(30) 1s forwards, blink 0.75s step-end infinite;
+            width: 0;
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { 50% { border-color: transparent } }
+
+        /* Badge glow */
+        .badge-earned {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .badge-locked {
+            filter: grayscale(1);
+            opacity: 0.4;
+        }
+
+        /* Radar chart canvas */
+        #radarChart {
+            max-width: 300px;
+            max-height: 300px;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen bg-animated-gradient">
+
+    <!-- ═══ Floating Orbs ═══ -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- ═══ Navigation ═══ -->
+    <nav class="relative z-50 glass-card mx-4 mt-4 mb-6 px-6 py-3 animate-fade-in-down" id="main-nav">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand -->
+            <a href="{{ url_for('index') }}" class="flex items-center gap-3 group" id="nav-brand">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-brain text-white text-lg"></i>
+                </div>
+                <span class="text-lg font-bold gradient-text hidden sm:inline">{{ t('app_name') }}</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="desktop-nav items-center gap-1">
+                <a href="{{ url_for('index') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-home">
+                    <i class="fa-solid fa-home {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_home') }}
+                </a>
+                {% if current_user %}
+                <a href="{{ url_for('courses_page') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-courses">
+                    <i class="fa-solid fa-book {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_courses') }}
+                </a>
+                <a href="{{ url_for('search') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-search">
+                    <i class="fa-solid fa-brain {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_search') }}
+                </a>
+                <a href="{{ url_for('recommend') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-recommend">
+                    <i class="fa-solid fa-wand-magic-sparkles {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_recommend') }}
+                </a>
+                <a href="{{ url_for('benefit') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-benefit">
+                    <i class="fa-solid fa-chart-line {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_benefit') }}
+                </a>
+                {% else %}
+                <a href="{{ url_for('onboard') }}" class="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all shadow-lg shadow-primary-500/20" id="nav-onboard">
+                    <i class="fa-solid fa-rocket {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_onboard') }}
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Right side: Lang toggle + user -->
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('set_lang', lang='ar' if lang == 'en' else 'en') }}"
+                   class="px-3 py-1.5 rounded-full text-xs font-bold border border-white/10 text-slate-300 hover:text-white hover:border-primary-400 transition-all"
+                   id="lang-toggle">
+                    🌐 {{ t('nav_lang') }}
+                </a>
+                {% if current_user %}
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold" id="user-avatar">
+                    {{ current_user.name[0]|upper }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="mobile-nav fixed bottom-0 left-0 right-0 z-50 glass-card-strong border-t border-white/10 px-2 py-2 justify-around items-center" id="mobile-nav">
+            <a href="{{ url_for('index') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-home text-base"></i>
+                <span>{{ t('nav_home') }}</span>
+            </a>
+            {% if current_user %}
+            <a href="{{ url_for('courses_page') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-book text-base"></i>
+                <span>{{ t('nav_courses') }}</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-brain text-base"></i>
+                <span>{{ t('nav_search') }}</span>
+            </a>
+            <a href="{{ url_for('recommend') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                <span>{{ t('nav_recommend') }}</span>
+            </a>
+            <a href="{{ url_for('benefit') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-chart-line text-base"></i>
+                <span>{{ t('nav_benefit') }}</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('onboard') }}" class="flex flex-col items-center gap-1 text-xs text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-rocket text-base"></i>
+                <span>{{ t('nav_onboard') }}</span>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- ═══ Flash Messages ═══ -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="max-w-3xl mx-auto px-4 space-y-2 mb-4 animate-fade-in-down" id="flash-messages">
+        {% for category, message in messages %}
+        <div class="glass-card px-4 py-3 flex items-center gap-3 rounded-xl
+            {% if category == 'success' %}border-accent-500/30 bg-accent-500/10
+            {% elif category == 'error' %}border-red-500/30 bg-red-500/10
+            {% elif category == 'warning' %}border-yellow-500/30 bg-yellow-500/10
+            {% else %}border-primary-500/30 bg-primary-500/10{% endif %}">
+            <i class="fa-solid
+                {% if category == 'success' %}fa-check-circle text-accent-400
+                {% elif category == 'error' %}fa-exclamation-circle text-red-400
+                {% elif category == 'warning' %}fa-exclamation-triangle text-yellow-400
+                {% else %}fa-info-circle text-primary-400{% endif %}"></i>
+            <span class="text-sm">{{ message }}</span>
+            <button onclick="this.parentElement.remove()" class="ml-auto text-slate-400 hover:text-white text-lg">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ═══ Main Content ═══ -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 pb-24">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="relative z-10 text-center py-6 text-slate-500 text-xs border-t border-white/5 mt-12" id="main-footer">
+        <p>{{ t('footer_text') }} &copy; {{ "2026" }}</p>
+    </footer>
+
+    <!-- ═══ JavaScript ═══ -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>
