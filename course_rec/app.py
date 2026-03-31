@@ -73,6 +73,7 @@ CATEGORY_DISPLAY = {
         "design": "Design",
         "business": "Business",
         "language": "Languages",
+        "linux": "Linux & IT",
     },
     "ar": {
         "programming": "البرمجة",
@@ -82,6 +83,7 @@ CATEGORY_DISPLAY = {
         "design": "التصميم",
         "business": "الأعمال",
         "language": "اللغات",
+        "linux": "لينكس",
     },
 }
 
@@ -93,6 +95,7 @@ CATEGORY_ICONS = {
     "design": "fa-palette",
     "business": "fa-briefcase",
     "language": "fa-language",
+    "linux": "fa-terminal",
 }
 
 # ══════════════════════════════════════════════════════════════════
@@ -461,18 +464,38 @@ ULTIMATE_FALLBACK_QUESTIONS = [
 ]
 
 
-def generate_questions_with_ollama(course_title: str, category: str, num_questions: int = 5) -> list:
+def generate_questions_with_groq(course_title: str, category: str, description: str, level: str, num_questions: int = 5) -> list:
     """
-    Generate course-specific questions using Ollama (local LLM).
-    Falls back to category-aware questions if Ollama is unavailable.
+    Generate course-specific questions using Groq API.
+    Falls back to category-aware questions if Groq is unavailable.
     """
-    import requests as req
+    import os
+    import re
+    import json
+    import random
+    from dotenv import load_dotenv
 
-    prompt = f"""You are an educational assessment expert. Generate exactly {num_questions} multiple-choice questions to assess a student's knowledge about the course: "{course_title}" (category: {category}).
+    load_dotenv()
+    api_key = os.getenv("GROQ_API_KEY")
 
-Each question must test real understanding of the subject.
+    if not api_key:
+        print("⚠️ Groq API key not found in .env")
+    else:
+        try:
+            from groq import Groq
+            client = Groq(api_key=api_key)
 
-Return ONLY a JSON array in this exact format, no other text:
+            prompt = f"""You are an educational assessment expert. Generate exactly {num_questions} multiple-choice questions to assess a student's knowledge about the following course:
+
+Title: {course_title}
+Category: {category}
+Level: {level}
+Course Description:
+{description}
+
+Each question must comprehensively test the real understanding of the subject taking into account the course level and description.
+
+Return ONLY a JSON array in this exact format, no other text or explanation:
 [
   {{
     "q": "Question text here?",
@@ -483,27 +506,16 @@ Return ONLY a JSON array in this exact format, no other text:
 
 The "answer" field is the 0-based index of the correct option. Generate exactly {num_questions} questions."""
 
-    try:
-        # Try both 127.0.0.1 and localhost (common Windows issue)
-        urls = [OLLAMA_URL, "http://localhost:11434/api/generate"]
-        success = False
-        raw = ""
-        
-        for url in urls:
-            try:
-                resp = req.post(
-                    url,
-                    json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False},
-                    timeout=15,
-                )
-                if resp.status_code == 200:
-                    raw = resp.json().get("response", "")
-                    success = True
-                    break
-            except:
-                continue
-                
-        if success:
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "You are a specialized AI that only outputs strict JSON arrays formatting multiple-choice questions."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.3,
+            )
+            raw = response.choices[0].message.content
+            
             # Extract JSON array from response
             match = re.search(r'\[.*\]', raw, re.DOTALL)
             if match:
@@ -515,11 +527,11 @@ The "answer" field is the 0-based index of the correct option. Generate exactly 
                             and isinstance(q["options"], list) and len(q["options"]) >= 2
                             and isinstance(q["answer"], int)):
                         valid.append(q)
-                if len(valid) >= 3:
-                    print(f"✅ Ollama generated {len(valid)} questions for: {course_title}")
+                if len(valid) >= 1:
+                    print(f"✅ Groq generated {len(valid)} questions for: {course_title}")
                     return valid[:num_questions]
-    except Exception as e:
-        print(f"⚠️  Ollama unavailable or errored: {e}")
+        except Exception as e:
+            print(f"⚠️  Groq unavailable or errored: {e}")
 
     # Fallback: use category-specific questions
     print(f"📝 Using category-specific fallback for: {category} ({course_title})")
@@ -536,17 +548,24 @@ The "answer" field is the 0-based index of the correct option. Generate exactly 
 
 def get_or_generate_questions(enrollment: dict) -> list:
     """
-    Get cached questions for this enrollment, or generate new ones.
-    Caches to avoid regenerating on every page load.
+    Get cached questions for this enrollment, or generate new ones using Groq.
     """
-    # Return cached if available
     if enrollment.get("questions"):
         return enrollment["questions"]
 
     course_title = enrollment.get("course_title", "General Course")
     category = enrollment.get("category", "programming")
-    questions = generate_questions_with_ollama(course_title, category)
-    return questions
+    course_id = enrollment.get("course_id")
+    level = enrollment.get("level", "Beginner")
+    
+    courses = load_courses_cache()
+    if courses:
+        course = next((c for c in courses if c.get("id") == course_id), {})
+        description = course.get("description", "No description available.")
+    else:
+        description = "No description available."
+
+    return generate_questions_with_groq(course_title, category, description, level)
 
 
 # ══════════════════════════════════════════════════════════════════

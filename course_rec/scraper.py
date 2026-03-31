@@ -70,6 +70,11 @@ CATEGORY_KEYWORDS = {
         "vocabulary", "pronunciation", "writing", "communication",
         "portuguese", "italian", "russian", "hindi", "turkish",
     ],
+    "linux": [
+        "linux", "ubuntu", "debian", "kali", "red hat", "centos", "fedora",
+        "unix", "kernel", "terminal", "bash", "shell", "scripting",
+        "command line", "sysadmin", "system administration", "operating system",
+    ],
 }
 
 

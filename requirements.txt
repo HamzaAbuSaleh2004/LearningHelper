@@ -6,3 +6,8 @@ numpy
 scikit-learn
 tqdm
 flask
+requests
+pyarrow
+google-generativeai
+python-dotenv
+groq

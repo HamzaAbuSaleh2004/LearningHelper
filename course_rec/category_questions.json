@@ -1,109 +1,49 @@
 {
   "programming": [
     {
-      "q": "What is the primary difference between a list and a tuple in Python?",
-      "options": ["Lists are immutable, tuples are mutable", "Lists are mutable, tuples are immutable", "Lists can only hold integers", "Tuples are faster for all operations"],
+      "q": "What is the result of 2 + 3 in most programming languages?",
+      "options": ["4", "5", "6", "23"],
       "answer": 1
     },
     {
-      "q": "Which of these is a valid way to define a function in Python?",
-      "options": ["function myFunc():", "def myFunc():", "void myFunc()", "new func myFunc:"],
-      "answer": 1
-    },
-    {
-      "q": "What does the 'self' keyword represent in a Python class method?",
-      "options": ["The class itself", "The instance of the object", "A global variable", "A built-in Python module"],
-      "answer": 1
-    },
-    {
-      "q": "Which data structure uses LIFO (Last-In, First-Out) ordering?",
-      "options": ["Queue", "Stack", "Linked List", "Binary Tree"],
-      "answer": 1
-    },
-    {
-      "q": "How do you handle exceptions in Python?",
-      "options": ["try...catch", "if...error", "try...except", "do...rescue"],
-      "answer": 2
-    }
-  ],
-  "ai_ml": [
-    {
-      "q": "In machine learning, what is 'overfitting'?",
-      "options": ["The model is too simple for the data", "The model performs well on training data but poorly on test data", "The model is too large to fit in memory", "The model is training too slowly"],
-      "answer": 1
-    },
-    {
-      "q": "What is the main goal of Supervised Learning?",
-      "options": ["Finding hidden patterns in unlabeled data", "Mapping input data to a known output label", "Maximizing a reward in an environment", "Reducing the dimensionality of a dataset"],
-      "answer": 1
-    },
-    {
-      "q": "What does 'LLM' stand for in modern AI?",
-      "options": ["Low Level Machine", "Large Language Model", "Linear Logic Mapper", "Local Learning Matrix"],
-      "answer": 1
-    },
-    {
-      "q": "Which activation function is most commonly used in the hidden layers of a neural network?",
-      "options": ["Sigmoid", "ReLU (Rectified Linear Unit)", "Step Function", "Identity"],
-      "answer": 1
-    },
-    {
-      "q": "What is the purpose of a validation dataset?",
-      "options": ["To train the model parameters", "To fine-tune hyperparameters and prevent overfitting", "To provide final performance metrics", "To store the model's history"],
+      "q": "Which data structure follows the First-In-First-Out (FIFO) principle?",
+      "options": ["Stack", "Queue", "Tree", "Graph"],
       "answer": 1
     }
   ],
   "data_science": [
     {
-      "q": "What is the primary library used for data manipulation and analysis in Python?",
-      "options": ["PyTorch", "Pandas", "Django", "Flask"],
-      "answer": 1
+      "q": "Which library is most commonly used for data manipulation in Python?",
+      "options": ["Pandas", "Requests", "Flask", "Matplotlib"],
+      "answer": 0
     },
     {
-      "q": "What does 'SQL' stand for?",
-      "options": ["Simple Query Language", "Structured Query Language", "Sequential Query Link", "Standard Quality Logic"],
-      "answer": 1
-    },
-    {
-      "q": "In a normal distribution, what percentage of data falls within one standard deviation of the mean?",
-      "options": ["50%", "68%", "95%", "99%"],
-      "answer": 1
-    },
-    {
-      "q": "Which plot is best for visualizing the correlation between two continuous variables?",
-      "options": ["Bar chart", "Pie chart", "Scatter plot", "Histogram"],
+      "q": "What is the mean of the numbers 10, 20, 30?",
+      "options": ["10", "15", "20", "25"],
       "answer": 2
-    },
-    {
-      "q": "What is 'data cleaning'?",
-      "options": ["Moving data to a faster database", "The process of fixing or removing incorrect, corrupted, or incomplete data", "Encrypting data for security", "Compiling data into a single file"],
-      "answer": 1
     }
   ],
-  "business": [
+  "web_development": [
     {
-      "q": "What does 'ROI' stand for in a business context?",
-      "options": ["Risk of Investment", "Return on Investment", "Real Operating Income", "Rate of Interest"],
-      "answer": 1
+      "q": "What does HTML stand for?",
+      "options": ["Hyper Text Markup Language", "High Text Management Language", "Hyperlink Text Modular Language", "Hyper Tool Multi Language"],
+      "answer": 0
     },
     {
-      "q": "Which of these is a part of the '4 Ps' of marketing?",
-      "options": ["Profit", "Product", "People", "Performance"],
-      "answer": 1
+      "q": "Which CSS property is used to change the background color?",
+      "options": ["color", "bgcolor", "background-color", "fill-color"],
+      "answer": 2
+    }
+  ],
+  "ai_ml": [
+    {
+      "q": "What does 'ML' stand for in technology?",
+      "options": ["Machine Learning", "Mobile Link", "Maximum Loss", "Manual Logic"],
+      "answer": 0
     },
     {
-      "q": "What is a 'SWOT' analysis used for?",
-      "options": ["Evaluating financial transactions", "Assessing Strengths, Weaknesses, Opportunities, and Threats", "Managing software development", "Searching for new employees"],
-      "answer": 1
-    },
-    {
-      "q": "What is the main goal of 'Agile' project management?",
-      "options": ["Strictly following a fixed plan", "Iterative development and rapid response to change", "Reducing the number of meetings", "Hiring fewer managers"],
-      "answer": 1
-    },
-    {
-      "q": "Which financial statement shows a company's revenues and expenses over a specific period?",
-      "options": ["Balance Sheet", "Income Statement", "Statement of Cash Flows", "Tax Return"],
+      "q": "Which of these is a supervised learning task?",
+      "options": ["Clustering", "Regression", "Dimensionality Reduction", "Anomaly Detection"],
       "answer": 1
     }
   ],
@@ -117,21 +57,47 @@
       "q": "What do 'CMYK' and 'RGB' represent?",
       "options": ["Programming languages", "Color models for print and digital", "File formats for images", "Design software brands"],
       "answer": 1
+    }
+  ],
+  "business": [
+    {
+      "q": "What does 'ROI' stand for in business?",
+      "options": ["Return on Investment", "Rate of Interest", "Risk of Inflation", "Ready over Inventory"],
+      "answer": 0
     },
     {
-      "q": "What is the main purpose of 'UX Design'?",
-      "options": ["Making things look pretty", "Improving the usability and accessibility of a product for the user", "Coding the backend of a website", "Managing brand marketing"],
+      "q": "Which of these is a common marketing framework?",
+      "options": ["SWOT", "JSON", "HTML", "CRUD"],
+      "answer": 0
+    }
+  ],
+  "language": [
+    {
+      "q": "Which word is a synonym for 'fast'?",
+      "options": ["Slow", "Quick", "Large", "Hard"],
       "answer": 1
     },
     {
-      "q": "In design, what does 'Contrast' help achieve?",
-      "options": ["Making everything look the same", "Guiding the viewer's eye and creating hierarchy", "Reducing file size", "Increasing resolution"],
+      "q": "In the sentence 'She sings beautifully', what is 'beautifully'?",
+      "options": ["Noun", "Verb", "Adjective", "Adverb"],
+      "answer": 3
+    }
+  ],
+  "linux": [
+    {
+      "q": "What is the core part of the Linux operating system?",
+      "options": ["The Shell", "The Kernel", "The Desktop Environment", "The Compiler"],
       "answer": 1
     },
     {
-      "q": "Which tool is most commonly used for vector illustration?",
-      "options": ["Adobe Photoshop", "Adobe Illustrator", "Final Cut Pro", "Microsoft Word"],
-      "answer": 1
+      "q": "Which command is used to list files in a directory?",
+      "options": ["cd", "mkdir", "ls", "pwd"],
+      "answer": 2
+    },
+    {
+      "q": "What does 'Sudo' stand for in Linux?",
+      "options": ["Superuser Do", "System Under Data Order", "Secure User Domain Object", "Server Upgrade Download Online"],
+      "answer": 0
     }
   ]
 }
