@@ -25,6 +25,19 @@ from flask import (
 
 from scraper import load_courses_cache, start_scraper_thread, run_scraper
 
+# ── Mentor Agent (Google ADK) ─────────────────────────────────────
+mentor_available = False
+try:
+    from mentor.agent import chat_with_mentor
+    mentor_available = bool(os.environ.get("GOOGLE_API_KEY"))
+    if mentor_available:
+        print("✅ Mentor Agent ready (Google ADK + Gemini).")
+    else:
+        print("⚠️  Mentor Agent loaded but GOOGLE_API_KEY not set. Mentor will be disabled.")
+except Exception as _mentor_err:
+    print(f"⚠️  Mentor Agent not available: {_mentor_err}")
+    chat_with_mentor = None
+
 # ── SBERT Integration (from existing src/ project) ───────────────
 # Add the src directory to path so we can import the SBERT recommender
 SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
@@ -214,6 +227,16 @@ TRANSLATIONS = {
         "rate_course": "Rate Course",
         "sbert_available": "SBERT engine active",
         "sbert_unavailable": "Running without SBERT",
+        "nav_mentor": "Mentor",
+        "mentor_title": "AI Learning Mentor",
+        "mentor_subtitle": "Get personalized guidance on certification paths, courses, and career growth.",
+        "mentor_placeholder": "Ask your mentor anything... e.g. How do I get AWS certified?",
+        "mentor_send": "Send",
+        "mentor_thinking": "Mentor is thinking...",
+        "mentor_welcome": "Hi! I'm your LearnPath Mentor. I can help you discover the best certification paths, find courses that match your goals, and guide your learning journey. What would you like to know?",
+        "mentor_unavailable": "Mentor is currently unavailable. Please set your GOOGLE_API_KEY environment variable.",
+        "mentor_error": "Something went wrong. Please try again.",
+        "mentor_no_key": "Mentor requires a Google API key (GOOGLE_API_KEY) to be configured.",
     },
     "ar": {
         "app_name": "مسار التعلّم الذكي",
@@ -327,6 +350,16 @@ TRANSLATIONS = {
         "rate_course": "قيّم الدورة",
         "sbert_available": "محرك SBERT مُفعّل",
         "sbert_unavailable": "يعمل بدون SBERT",
+        "nav_mentor": "المرشد",
+        "mentor_title": "المرشد التعليمي الذكي",
+        "mentor_subtitle": "احصل على إرشادات شخصية حول مسارات الشهادات والدورات والنمو المهني.",
+        "mentor_placeholder": "اسأل مرشدك أي شيء... مثلاً: كيف أحصل على شهادة AWS؟",
+        "mentor_send": "إرسال",
+        "mentor_thinking": "المرشد يفكر...",
+        "mentor_welcome": "مرحباً! أنا مرشدك في LearnPath. يمكنني مساعدتك في اكتشاف أفضل مسارات الشهادات وإيجاد دورات تناسب أهدافك وتوجيه رحلتك التعليمية. بماذا تريد أن تبدأ؟",
+        "mentor_unavailable": "المرشد غير متاح حالياً. يرجى تعيين متغير البيئة GOOGLE_API_KEY.",
+        "mentor_error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "mentor_no_key": "يتطلب المرشد مفتاح Google API (GOOGLE_API_KEY) ليعمل.",
     },
 }
 
@@ -1187,6 +1220,59 @@ def scrape():
 
 
 # ── API endpoints ─────────────────────────────────────────────────
+@app.route("/mentor")
+@require_user
+def mentor():
+    """Render the AI mentor chat page."""
+    user = get_current_user()
+    lang = get_lang()
+    return render_template(
+        "mentor.html",
+        user=user,
+        lang=lang,
+        dir="rtl" if lang == "ar" else "ltr",
+        t=t,
+        mentor_available=mentor_available,
+    )
+
+
+@app.route("/api/mentor/chat", methods=["POST"])
+@require_user
+def api_mentor_chat():
+    """API endpoint: send a message to the mentor agent and return the reply."""
+    if not mentor_available or chat_with_mentor is None:
+        return jsonify({"error": t("mentor_no_key"), "reply": None}), 503
+
+    data = request.get_json(silent=True) or {}
+    user_message = (data.get("message") or "").strip()
+    if not user_message:
+        return jsonify({"error": "Empty message", "reply": None}), 400
+
+    user = get_current_user()
+    user_id = user["email"]
+    # Use Flask session ID as the conversation session to persist history
+    session_id = session.get("mentor_session_id")
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        session["mentor_session_id"] = session_id
+
+    # Prepend learner context on the first turn so the agent knows who it's talking to
+    context_prefix = (
+        f"[Learner context — Name: {user.get('name', 'Unknown')}, "
+        f"Level: {user.get('level', 'Unknown')}, "
+        f"Goals: {', '.join(user.get('goals', []) or ['not set'])}, "
+        f"Email: {user_id}]\n\n"
+    )
+    full_message = context_prefix + user_message
+
+    try:
+        reply = chat_with_mentor(user_id=user_id, session_id=session_id, message=full_message)
+        return jsonify({"reply": reply})
+    except Exception as exc:
+        app.logger.error("Mentor agent error: %s", exc)
+        return jsonify({"error": t("mentor_error"), "reply": None}), 500
+
+
 @app.route("/api/weights")
 @require_user
 def api_weights():

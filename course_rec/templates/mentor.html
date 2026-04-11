@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('mentor_title') }} — {{ t('app_name') }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-6 animate-fade-in">
+
+  <!-- Header -->
+  <div class="text-center mb-6">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-600 to-accent-500 shadow-lg shadow-primary-500/30 mb-4">
+      <i class="fa-solid fa-user-graduate text-2xl text-white"></i>
+    </div>
+    <h1 class="text-3xl font-bold text-white mb-2">{{ t('mentor_title') }}</h1>
+    <p class="text-slate-400 text-sm max-w-xl mx-auto">{{ t('mentor_subtitle') }}</p>
+  </div>
+
+  {% if not mentor_available %}
+  <!-- Unavailable banner -->
+  <div class="glass-card border border-yellow-500/30 rounded-2xl p-5 mb-6 flex items-start gap-4">
+    <i class="fa-solid fa-triangle-exclamation text-yellow-400 text-xl mt-0.5 flex-shrink-0"></i>
+    <div>
+      <p class="text-yellow-300 font-semibold">Mentor Unavailable</p>
+      <p class="text-slate-400 text-sm mt-1">{{ t('mentor_no_key') }}</p>
+      <p class="text-slate-500 text-xs mt-2 font-mono">Set <span class="text-green-400">GOOGLE_API_KEY</span> in your environment, then restart the server.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Quick suggestion chips -->
+  <div class="flex flex-wrap gap-2 justify-center mb-5" id="suggestion-chips">
+    {% set suggestions = [
+      ("AWS Cloud certification path", "fa-cloud"),
+      ("Best AI/ML certifications 2025", "fa-robot"),
+      ("Python learning roadmap for beginners", "fa-code"),
+      ("Data Science career path", "fa-chart-bar"),
+      ("Cybersecurity certifications", "fa-shield-halved"),
+      ("Web development courses", "fa-globe"),
+    ] %}
+    {% for text, icon in suggestions %}
+    <button
+      onclick="sendSuggestion(this)"
+      data-text="{{ text }}"
+      class="suggestion-chip px-3 py-1.5 rounded-full text-xs font-medium
+             bg-white/5 border border-white/10 text-slate-300
+             hover:bg-primary-600/20 hover:border-primary-500/40 hover:text-primary-300
+             transition-all duration-200 {% if not mentor_available %}opacity-40 cursor-not-allowed{% endif %}"
+      {% if not mentor_available %}disabled{% endif %}
+    >
+      <i class="fa-solid {{ icon }} me-1.5 text-primary-400"></i>{{ text }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Chat window -->
+  <div class="glass-card rounded-2xl overflow-hidden border border-white/10 flex flex-col"
+       style="height: 520px;">
+
+    <!-- Messages area -->
+    <div id="chat-messages"
+         class="flex-1 overflow-y-auto p-5 space-y-4 scroll-smooth"
+         style="scroll-behavior: smooth;">
+
+      <!-- Welcome message (mentor bubble) -->
+      <div class="flex items-start gap-3 animate-fade-in-up" id="welcome-msg">
+        <div class="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center shadow-md">
+          <i class="fa-solid fa-user-graduate text-white text-sm"></i>
+        </div>
+        <div class="max-w-[80%]">
+          <div class="bg-white/8 border border-white/10 rounded-2xl rounded-tl-none px-4 py-3">
+            <p class="text-slate-200 text-sm leading-relaxed" id="welcome-text">
+              {{ t('mentor_welcome') }}
+            </p>
+          </div>
+          <p class="text-slate-600 text-xs mt-1 {{ 'text-right' if lang == 'ar' else '' }}">LearnPath Mentor</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-white/10"></div>
+
+    <!-- Input area -->
+    <div class="p-4 bg-black/20">
+      <form id="chat-form" class="flex items-end gap-3" onsubmit="sendMessage(event)">
+        <div class="flex-1 relative">
+          <textarea
+            id="chat-input"
+            rows="1"
+            placeholder="{{ t('mentor_placeholder') }}"
+            class="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-sm text-slate-200
+                   placeholder-slate-500 focus:outline-none focus:border-primary-500/60 focus:bg-white/8
+                   transition-all resize-none leading-relaxed"
+            style="min-height: 48px; max-height: 120px; overflow-y: auto;"
+            {% if not mentor_available %}disabled{% endif %}
+            onkeydown="handleKeydown(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          id="send-btn"
+          class="flex-shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br from-primary-600 to-primary-500
+                 text-white flex items-center justify-center shadow-lg shadow-primary-500/25
+                 hover:from-primary-500 hover:to-primary-400 transition-all duration-200
+                 disabled:opacity-40 disabled:cursor-not-allowed"
+          {% if not mentor_available %}disabled{% endif %}
+        >
+          <i class="fa-solid fa-paper-plane text-sm" id="send-icon"></i>
+        </button>
+      </form>
+      <p class="text-slate-600 text-xs mt-2 text-center">
+        <i class="fa-solid fa-circle-info me-1"></i>
+        Powered by Google Gemini + Google Search — responses may take a few seconds
+      </p>
+    </div>
+  </div>
+
+  <!-- Session reset button -->
+  <div class="text-center mt-4">
+    <button onclick="resetSession()"
+            class="text-xs text-slate-500 hover:text-slate-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5">
+      <i class="fa-solid fa-rotate me-1"></i> Start new conversation
+    </button>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  const CHAT_API = "{{ url_for('api_mentor_chat') }}";
+  const RESET_URL = "{{ url_for('mentor') }}";
+  const MENTOR_AVAILABLE = {{ 'true' if mentor_available else 'false' }};
+  const MSG_THINKING = "{{ t('mentor_thinking') }}";
+  const MSG_ERROR = "{{ t('mentor_error') }}";
+
+  // Configure marked for safe rendering
+  marked.setOptions({ breaks: true, gfm: true });
+
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+  const sendIcon = document.getElementById('send-icon');
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKeydown(e) {
+    // Send on Enter, new line on Shift+Enter
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(e);
+    }
+  }
+
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function appendMessage(role, text, isLoading = false) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex items-start gap-3 animate-fade-in-up';
+
+    if (role === 'mentor') {
+      wrapper.innerHTML = `
+        <div class="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center shadow-md">
+          <i class="fa-solid fa-user-graduate text-white text-sm"></i>
+        </div>
+        <div class="max-w-[80%]">
+          <div class="bg-white/8 border border-white/10 rounded-2xl rounded-tl-none px-4 py-3 mentor-bubble">
+            ${isLoading
+              ? `<div class="flex items-center gap-2 text-slate-400 text-sm">
+                   <span class="flex gap-1">
+                     <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0s"></span>
+                     <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0.15s"></span>
+                     <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0.3s"></span>
+                   </span>
+                   ${MSG_THINKING}
+                 </div>`
+              : `<div class="prose prose-invert prose-sm max-w-none text-slate-200 leading-relaxed markdown-content">${marked.parse(text)}</div>`
+            }
+          </div>
+          <p class="text-slate-600 text-xs mt-1">LearnPath Mentor</p>
+        </div>`;
+    } else {
+      wrapper.innerHTML = `
+        <div class="flex items-start gap-3 w-full justify-end">
+          <div class="max-w-[80%]">
+            <div class="bg-primary-600/30 border border-primary-500/30 rounded-2xl rounded-tr-none px-4 py-3">
+              <p class="text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(text)}</p>
+            </div>
+            <p class="text-slate-600 text-xs mt-1 text-right">You</p>
+          </div>
+          <div class="flex-shrink-0 w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center">
+            <i class="fa-solid fa-user text-slate-400 text-sm"></i>
+          </div>
+        </div>`;
+    }
+
+    chatMessages.appendChild(wrapper);
+    scrollToBottom();
+    return wrapper;
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function setLoading(loading) {
+    sendBtn.disabled = loading || !MENTOR_AVAILABLE;
+    chatInput.disabled = loading || !MENTOR_AVAILABLE;
+    sendIcon.className = loading
+      ? 'fa-solid fa-spinner fa-spin text-sm'
+      : 'fa-solid fa-paper-plane text-sm';
+  }
+
+  async function sendMessage(e) {
+    e.preventDefault();
+    if (!MENTOR_AVAILABLE) return;
+
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    // Append user bubble
+    appendMessage('user', text);
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+
+    // Show loading bubble
+    const loadingBubble = appendMessage('mentor', '', true);
+    setLoading(true);
+
+    try {
+      const res = await fetch(CHAT_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await res.json();
+
+      // Replace loading bubble with real response
+      chatMessages.removeChild(loadingBubble);
+
+      if (data.reply) {
+        appendMessage('mentor', data.reply);
+      } else {
+        appendMessage('mentor', data.error || MSG_ERROR);
+      }
+    } catch (err) {
+      chatMessages.removeChild(loadingBubble);
+      appendMessage('mentor', MSG_ERROR);
+    } finally {
+      setLoading(false);
+      chatInput.focus();
+    }
+  }
+
+  function sendSuggestion(btn) {
+    if (!MENTOR_AVAILABLE) return;
+    chatInput.value = btn.dataset.text;
+    autoResize(chatInput);
+    // Hide chips after first use to keep UI clean
+    document.getElementById('suggestion-chips').style.display = 'none';
+    sendMessage(new Event('submit'));
+  }
+
+  function resetSession() {
+    fetch('/api/mentor/reset', { method: 'POST' }).catch(() => {});
+    // Clear chat UI
+    chatMessages.innerHTML = '';
+    // Restore welcome message by reloading the page
+    window.location.reload();
+  }
+
+  // Add markdown-content styles dynamically
+  const style = document.createElement('style');
+  style.textContent = `
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+      color: #e2e8f0; font-weight: 600; margin: 0.75rem 0 0.4rem;
+    }
+    .markdown-content h2 { font-size: 1rem; }
+    .markdown-content h3 { font-size: 0.9rem; color: #a5b4fc; }
+    .markdown-content ul, .markdown-content ol {
+      padding-left: 1.25rem; margin: 0.4rem 0;
+    }
+    .markdown-content li { margin: 0.2rem 0; color: #cbd5e1; }
+    .markdown-content strong { color: #c7d2fe; }
+    .markdown-content code {
+      background: rgba(255,255,255,0.1); padding: 0.1rem 0.35rem;
+      border-radius: 4px; font-size: 0.8rem; color: #6ee7b7;
+    }
+    .markdown-content p { margin: 0.3rem 0; }
+    .markdown-content a { color: #818cf8; text-decoration: underline; }
+  `;
+  document.head.appendChild(style);
+
+  scrollToBottom();
+  if (MENTOR_AVAILABLE) chatInput.focus();
+</script>
+{% endblock %}

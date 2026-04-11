@@ -245,6 +245,9 @@
                 <a href="{{ url_for('benefit') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-benefit">
                     <i class="fa-solid fa-chart-line {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_benefit') }}
                 </a>
+                <a href="{{ url_for('mentor') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-mentor">
+                    <i class="fa-solid fa-user-graduate {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_mentor') }}
+                </a>
                 {% else %}
                 <a href="{{ url_for('onboard') }}" class="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all shadow-lg shadow-primary-500/20" id="nav-onboard">
                     <i class="fa-solid fa-rocket {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_onboard') }}
@@ -289,6 +292,10 @@
             <a href="{{ url_for('benefit') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
                 <i class="fa-solid fa-chart-line text-base"></i>
                 <span>{{ t('nav_benefit') }}</span>
+            </a>
+            <a href="{{ url_for('mentor') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-user-graduate text-base"></i>
+                <span>{{ t('nav_mentor') }}</span>
             </a>
             {% else %}
             <a href="{{ url_for('onboard') }}" class="flex flex-col items-center gap-1 text-xs text-primary-400 transition-colors p-2">

@@ -11,3 +11,5 @@ pyarrow
 google-generativeai
 python-dotenv
 groq
+# Mentor Agent (Google ADK)
+google-adk
