@@ -5,9 +5,18 @@ Bilingual support (EN/AR), testing system, and course scraping.
 """
 
 import json
-import math
 import os
 import sys
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+
+# Ensure stdout uses utf-8 so emojis don't crash the app on Windows
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+except AttributeError:
+    pass
+
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
@@ -462,8 +471,6 @@ def inject_globals():
 # ══════════════════════════════════════════════════════════════════
 # AI QUESTION GENERATOR (Ollama → Category Fallback)
 # ══════════════════════════════════════════════════════════════════
-import re
-import random
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"  # Using 127.0.0.1 (better on Windows)
 OLLAMA_MODEL = "llama3.2"
@@ -1256,12 +1263,25 @@ def api_mentor_chat():
         session_id = str(uuid.uuid4())
         session["mentor_session_id"] = session_id
 
-    # Prepend learner context on the first turn so the agent knows who it's talking to
+    # Build rich learner context so the agent can personalise without needing tool calls
+    enrolled = user.get("enrolled_courses", [])
+    active_courses = [c["course_title"] for c in enrolled if not c.get("completed")]
+    completed_courses = [c["course_title"] for c in enrolled if c.get("completed")]
+    weights = user.get("weights", {})
+    top_interests = sorted(weights.items(), key=lambda x: x[1], reverse=True)
+    top_interests_str = ", ".join(
+        f"{k.replace('_', ' ')} ({round(v*100)}%)" for k, v in top_interests if v > 0
+    ) or "none yet"
+
     context_prefix = (
-        f"[Learner context — Name: {user.get('name', 'Unknown')}, "
-        f"Level: {user.get('level', 'Unknown')}, "
-        f"Goals: {', '.join(user.get('goals', []) or ['not set'])}, "
-        f"Email: {user_id}]\n\n"
+        f"[LEARNER PROFILE]\n"
+        f"Name: {user.get('name', 'Unknown')}\n"
+        f"Level: {user.get('level', 'Unknown')}\n"
+        f"Learning Goals: {', '.join(user.get('goals', []) or ['not set'])}\n"
+        f"Top Interests: {top_interests_str}\n"
+        f"Currently Enrolled: {', '.join(active_courses) if active_courses else 'none'}\n"
+        f"Completed Courses: {', '.join(completed_courses) if completed_courses else 'none'}\n"
+        f"[END PROFILE]\n\n"
     )
     full_message = context_prefix + user_message
 
