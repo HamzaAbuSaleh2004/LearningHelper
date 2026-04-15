@@ -37,6 +37,17 @@
                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all">
             </div>
 
+            <!-- Password -->
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-semibold text-slate-300 mb-2">
+                    <i class="fa-solid fa-lock {{ 'ms-1' if lang == 'ar' else 'me-1' }} text-primary-400"></i>
+                    {{ t('field_password') }}
+                </label>
+                <input type="password" name="password" id="password" required
+                       placeholder="Create a strong password"
+                       class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all">
+            </div>
+
             <!-- Study Level -->
             <div class="mb-6">
                 <label for="level" class="block text-sm font-semibold text-slate-300 mb-2">

@@ -31,6 +31,9 @@ from flask import (
     flash,
     jsonify,
 )
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import bcrypt
 
 from scraper import load_courses_cache, start_scraper_thread, run_scraper
 
@@ -71,7 +74,6 @@ app.secret_key = "course_rec_secret_key_2026"
 app.config["JSON_AS_ASCII"] = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_FILE = os.path.join(BASE_DIR, "db.json")
 
 # ══════════════════════════════════════════════════════════════════
 # CATEGORIES
@@ -246,6 +248,15 @@ TRANSLATIONS = {
         "mentor_unavailable": "Mentor is currently unavailable. Please set your GOOGLE_API_KEY environment variable.",
         "mentor_error": "Something went wrong. Please try again.",
         "mentor_no_key": "Mentor requires a Google API key (GOOGLE_API_KEY) to be configured.",
+        "field_password": "Password",
+        "btn_login": "Login",
+        "btn_logout": "Logout",
+        "login_title": "Welcome Back",
+        "login_subtitle": "Login to continue your learning journey",
+        "nav_friends": "Social",
+        "btn_add_friend": "Add Friend",
+        "friend_request_sent": "Friend request sent!",
+        "invite_friend": "Invite Friend",
     },
     "ar": {
         "app_name": "مسار التعلّم الذكي",
@@ -369,52 +380,202 @@ TRANSLATIONS = {
         "mentor_unavailable": "المرشد غير متاح حالياً. يرجى تعيين متغير البيئة GOOGLE_API_KEY.",
         "mentor_error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
         "mentor_no_key": "يتطلب المرشد مفتاح Google API (GOOGLE_API_KEY) ليعمل.",
+        "field_password": "كلمة المرور",
+        "btn_login": "تسجيل الدخول",
+        "btn_logout": "تسجيل الخروج",
+        "login_title": "مرحباً بعودتك",
+        "login_subtitle": "سجل الدخول لمتابعة رحلة تعلمك",
+        "nav_friends": "المجتمع",
+        "btn_add_friend": "إضافة صديق",
+        "friend_request_sent": "تم إرسال طلب الصداقة!",
+        "invite_friend": "دعوة صديق",
     },
 }
 
 # ══════════════════════════════════════════════════════════════════
-# DATABASE HELPERS
+# DATABASE HELPERS (PostgreSQL)
 # ══════════════════════════════════════════════════════════════════
-def load_db() -> dict:
-    """Load the JSON database."""
-    if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {"users": []}
+def get_db_connection():
+    """Establish a connection to the PostgreSQL database."""
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST", "localhost"),
+            database=os.getenv("DB_NAME", "learning_helper"),
+            user=os.getenv("DB_USER", "postgres"),
+            password=os.getenv("DB_PASSWORD", "postgres"),
+            port=os.getenv("DB_PORT", "5432")
+        )
+        return conn
+    except Exception as e:
+        print(f"❌ Database connection error: {e}")
+        return None
 
+def ensure_social_tables():
+    """Ensure social tables exist on startup."""
+    conn = get_db_connection()
+    if not conn: return
+    try:
+        with conn.cursor() as cur:
+            # Courses Progress Table
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS courses_progress (
+                    id SERIAL PRIMARY KEY,
+                    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    course_id TEXT NOT NULL,
+                    progress_percent INTEGER DEFAULT 0 CHECK (progress_percent >= 0 AND progress_percent <= 100),
+                    completed BOOLEAN DEFAULT FALSE,
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_id, course_id)
+                )
+            """)
+            # Friendships Table
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS friendships (
+                    id SERIAL PRIMARY KEY,
+                    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    friend_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    status TEXT DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(user_id, friend_id),
+                    CHECK (user_id != friend_id)
+                )
+            """)
+            # Course Invites Table
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS course_invites (
+                    id SERIAL PRIMARY KEY,
+                    from_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    to_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    course_id TEXT NOT NULL,
+                    status TEXT DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
+    finally:
+        conn.close()
 
-def save_db(db: dict):
-    """Save the JSON database."""
-    with open(DB_FILE, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=2, ensure_ascii=False)
+def sync_user_progress_to_db(user):
+    """Restore JSON progress into PostgreSQL for visibility."""
+    enrollments = user.get("enrolled_courses", [])
+    for enr in enrollments:
+        plan = enr.get("study_plan", [])
+        total = len(plan)
+        checked = sum(1 for i in plan if i.get("checked"))
+        pct = round((checked / total) * 100) if total > 0 else 0
+        update_course_progress(user["id"], enr["course_id"], pct)
 
 
 def get_user(email: str) -> dict | None:
-    """Find a user by email."""
-    db = load_db()
-    for user in db["users"]:
-        if user["email"] == email:
-            return user
-    return None
+    """Find a user in PostgreSQL by email."""
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("SELECT * FROM users WHERE email = %s", (email.lower(),))
+            return cur.fetchone()
+    finally:
+        conn.close()
 
 
 def get_current_user() -> dict | None:
-    """Get the currently logged-in user from session."""
+    """Get the currently logged-in user from session using the database."""
     email = session.get("user_email")
     if email:
-        return get_user(email)
+        user = get_user(email)
+        if user:
+            try:
+                # Sync progress from JSON to Postgres for social visibility
+                sync_user_progress_to_db(user)
+            except Exception:
+                pass
+        return user
     return None
 
 
 def update_user(email: str, updates: dict):
-    """Update a user's data."""
-    db = load_db()
-    for i, user in enumerate(db["users"]):
-        if user["email"] == email:
-            db["users"][i].update(updates)
-            save_db(db)
-            return
-    raise ValueError(f"User {email} not found")
+    """Update a user's data in PostgreSQL."""
+    conn = get_db_connection()
+    if not conn:
+        return
+    
+    # List of columns in your DB that are JSONB
+    json_columns = {"goals", "weights", "enrolled_courses", "feedback_history", "active_course"}
+    
+    try:
+        with conn.cursor() as cur:
+            for key, value in updates.items():
+                # If it's a JSON column or the value is a complex type, convert to JSON string
+                if key in json_columns or isinstance(value, (dict, list)):
+                    import json
+                    value = json.dumps(value)
+                
+                query = f"UPDATE users SET {key} = %s WHERE email = %s"
+                cur.execute(query, (value, email.lower()))
+            conn.commit()
+    finally:
+        conn.close()
+
+
+def get_user_by_id(user_id: str) -> dict | None:
+    """Find a user in PostgreSQL by ID."""
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def get_user_by_email(email: str) -> dict | None:
+    """Find a user by email (alias for get_user)."""
+    return get_user(email)
+
+
+def update_course_progress(user_id: str, course_id: str, progress: int):
+    """Update progress for a specific user and course in PostgreSQL."""
+    conn = get_db_connection()
+    if not conn:
+        return
+    try:
+        with conn.cursor() as cur:
+            completed = progress >= 100
+            cur.execute("""
+                INSERT INTO courses_progress (user_id, course_id, progress_percent, completed, last_updated)
+                VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)
+                ON CONFLICT (user_id, course_id) 
+                DO UPDATE SET 
+                    progress_percent = EXCLUDED.progress_percent,
+                    completed = EXCLUDED.completed,
+                    last_updated = CURRENT_TIMESTAMP
+                WHERE EXCLUDED.progress_percent > courses_progress.progress_percent
+            """, (user_id, course_id, progress, completed))
+            conn.commit()
+    finally:
+        conn.close()
+
+
+def are_friends(user_id1: str, user_id2: str) -> bool:
+    """Check if two users are accepted friends."""
+    conn = get_db_connection()
+    if not conn: return False
+    try:
+        u1, u2 = str(user_id1), str(user_id2)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT 1 FROM friendships 
+                WHERE ((user_id = %s::uuid AND friend_id = %s::uuid) 
+                   OR (user_id = %s::uuid AND friend_id = %s::uuid))
+                AND status = 'accepted'
+            """, (u1, u2, u2, u1))
+            return cur.fetchone() is not None
+    finally:
+        conn.close()
 
 
 def require_user(f):
@@ -423,8 +584,8 @@ def require_user(f):
     def decorated(*args, **kwargs):
         user = get_current_user()
         if not user:
-            flash(t("no_user"), "warning")
-            return redirect(url_for("onboard"))
+            flash("Please login to access this page.", "warning")
+            return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated
 
@@ -658,48 +819,85 @@ def index():
     )
 
 
-# ── Onboarding ───────────────────────────────────────────────────
+# ── Login ────────────────────────────────────────────────────────
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Verify email and password, then create session."""
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
+
+        user = get_user(email)
+        # Check if user exists and password is correct
+        if user and bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
+            session["user_email"] = email
+            flash(f"Welcome back, {user['name']}!", "success")
+            return redirect(url_for("index"))
+        
+        flash("Invalid email or password.", "error")
+    return render_template("login.html")
+
+
+# ── Logout ───────────────────────────────────────────────────────
+@app.route("/logout")
+def logout():
+    """Clear session and redirect to home."""
+    session.pop("user_email", None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for("index"))
+
+
+# ── Onboarding (Signup) ─────────────────────────────────────────
 @app.route("/onboard", methods=["GET", "POST"])
 def onboard():
     """User registration / onboarding form."""
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
         level = request.form.get("level", "Beginner")
         goals = request.form.getlist("goals")
 
-        if not name or not email or not goals:
+        if not name or not email or not password or not goals:
             flash("Please fill in all required fields.", "error")
             return redirect(url_for("onboard"))
 
-        db = load_db()
         existing = get_user(email)
-
         if existing:
+            flash("An account with this email already exists. Please login.", "info")
+            return redirect(url_for("login"))
+
+        # Hash the password for security
+        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        user_id = str(uuid.uuid4())
+        initial_weights = {cat: 0.0 for cat in CATEGORIES}
+
+        conn = get_db_connection()
+        if not conn:
+            flash("Database connection failed. Please try again later.", "error")
+            return redirect(url_for("onboard"))
+
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO users (id, name, email, password_hash, level, goals, weights)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (user_id, name, email, hashed_pw, level, json.dumps(goals), json.dumps(initial_weights))
+                )
+                conn.commit()
+            
             session["user_email"] = email
-            flash(t("flash_profile_exists"), "info")
+            flash("Profile created successfully! Welcome aboard!", "success")
             return redirect(url_for("index"))
-
-        # Create new user — weights start at 0, grow only from course completions
-        user = {
-            "id": str(uuid.uuid4()),
-            "name": name,
-            "email": email,
-            "level": level,
-            "goals": goals,
-            "weights": {cat: 0.0 for cat in CATEGORIES},
-            "tests": {"pre": None, "post": None},
-            "enrolled_courses": [],
-            "active_course": None,
-            "feedback_history": [],
-            "created_at": datetime.now().isoformat(),
-        }
-        db["users"].append(user)
-        save_db(db)
-
-        session["user_email"] = email
-        flash(t("flash_profile_created"), "success")
-        return redirect(url_for("index"))
+        except Exception as e:
+            print(f"❌ Signup error: {e}")
+            flash("An error occurred during registration.", "error")
+            return redirect(url_for("onboard"))
+        finally:
+            conn.close()
 
     return render_template("onboarding.html")
 
@@ -841,6 +1039,9 @@ def enroll(course_id):
         enrolled = user.get("enrolled_courses", [])
         enrolled.append(enrollment)
         update_user(user["email"], {"enrolled_courses": enrolled, "active_course": enrollment["id"]})
+        
+        # Sync with courses_progress table
+        update_course_progress(user["id"], course_id, 0)
 
         flash(f"Enrolled in {course['title']}! Take the pre-assessment now.", "success")
         return redirect(url_for("test", test_type="pre", enrollment_id=enrollment["id"]))
@@ -1037,8 +1238,19 @@ def check_item():
             plan = enr.get("study_plan", [])
             total = len(plan)
             checked = sum(1 for i in plan if i.get("checked"))
+            progress_pct = round((checked / total) * 100) if total else 0
+            
             update_user(user["email"], {"enrolled_courses": enrolled})
-            return jsonify({"ok": True, "checked": item["checked"], "progress": round((checked / total) * 100) if total else 0, "all_done": checked == total})
+            
+            # Sync with courses_progress table for social comparison
+            update_course_progress(user["id"], enr["course_id"], progress_pct)
+            
+            return jsonify({
+                "ok": True, 
+                "checked": item["checked"], 
+                "progress": progress_pct, 
+                "all_done": checked == total
+            })
 
     return jsonify({"ok": False}), 404
 
@@ -1306,12 +1518,323 @@ def api_weights():
 
 
 # ══════════════════════════════════════════════════════════════════
+# SOCIAL LEARNING SYSTEM APIS
+# ══════════════════════════════════════════════════════════════════
+
+@app.route("/friends")
+@require_user
+def friends_page():
+    """Render the social/friends page."""
+    user = get_current_user()
+    conn = get_db_connection()
+    friends = []
+    pending_received = []
+    pending_sent = []
+    invites = []
+    
+    if conn:
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                # Get accepted friends
+                cur.execute("""
+                    SELECT u.id, u.name, u.email, u.level 
+                    FROM users u
+                    JOIN friendships f ON (f.friend_id = u.id OR f.user_id = u.id)
+                    WHERE (f.user_id = %s OR f.friend_id = %s)
+                    AND f.status = 'accepted'
+                    AND u.id != %s
+                """, (user['id'], user['id'], user['id']))
+                friends = cur.fetchall()
+                
+                # Get pending requests received
+                cur.execute("""
+                    SELECT u.id, u.name, f.id as request_id
+                    FROM users u
+                    JOIN friendships f ON f.user_id = u.id
+                    WHERE f.friend_id = %s AND f.status = 'pending'
+                """, (user['id'],))
+                pending_received = cur.fetchall()
+                
+                # Get pending requests sent
+                cur.execute("""
+                    SELECT u.id, u.name
+                    FROM users u
+                    JOIN friendships f ON f.friend_id = u.id
+                    WHERE f.user_id = %s AND f.status = 'pending'
+                """, (user['id'],))
+                pending_sent = cur.fetchall()
+
+                # Get course invites (received & pending) - for the action list
+                cur.execute("""
+                    SELECT ci.*, u.name as from_name
+                    FROM course_invites ci
+                    JOIN users u ON ci.from_user_id = u.id
+                    WHERE ci.to_user_id = %s AND ci.status = 'pending'
+                """, (user['id'],))
+                invites = cur.fetchall()
+
+                # Get all Collaboration (Approved Invites where YOU are either sender or receiver)
+                cur.execute("""
+                    SELECT 
+                        ci.course_id, ci.status, ci.created_at,
+                        CASE 
+                            WHEN ci.from_user_id = %s THEN u_to.name 
+                            ELSE u_from.name 
+                        END as partner_name,
+                        CASE 
+                            WHEN ci.from_user_id = %s THEN cp_to.progress_percent 
+                            ELSE cp_from.progress_percent 
+                        END as partner_progress,
+                        CASE
+                            WHEN ci.from_user_id = %s THEN 'Invited by You'
+                            ELSE 'Invited You'
+                        END as role
+                    FROM course_invites ci
+                    JOIN users u_from ON ci.from_user_id = u_from.id
+                    JOIN users u_to ON ci.to_user_id = u_to.id
+                    LEFT JOIN courses_progress cp_from ON (cp_from.user_id = ci.from_user_id AND cp_from.course_id = ci.course_id)
+                    LEFT JOIN courses_progress cp_to ON (cp_to.user_id = ci.to_user_id AND cp_to.course_id = ci.course_id)
+                    WHERE (ci.from_user_id = %s OR ci.to_user_id = %s)
+                    AND ci.status = 'accepted'
+                    ORDER BY ci.created_at DESC
+                """, (user['id'], user['id'], user['id'], user['id'], user['id']))
+                collaborations = cur.fetchall()
+                
+                courses_cache = load_courses_cache()
+                
+                # Combine for title lookup
+                all_social_items = invites + collaborations
+                for item in all_social_items:
+                    course = next((c for c in courses_cache if str(c['id']) == str(item['course_id'])), None)
+                    item['course_title'] = course['title'] if course else "Unknown Course"
+
+        finally:
+            conn.close()
+            
+    return render_template("friends.html", 
+                         friends=friends, 
+                         pending_received=pending_received, 
+                         pending_sent=pending_sent,
+                         invites=invites,
+                         collaborations=collaborations)
+
+
+@app.route("/api/friends/request", methods=["POST"])
+@require_user
+def friend_request():
+    """Send a friend request by email."""
+    data = request.get_json() or {}
+    friend_email = data.get("email", "").strip().lower()
+    user = get_current_user()
+    
+    if friend_email == user['email'].lower():
+        return jsonify({"error": "You cannot add yourself as a friend."}), 400
+        
+    friend = get_user_by_email(friend_email)
+    if not friend:
+        return jsonify({"error": "User not found."}), 404
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Check for existing relationship
+            cur.execute("""
+                SELECT status FROM friendships 
+                WHERE (user_id = %s AND friend_id = %s) OR (user_id = %s AND friend_id = %s)
+            """, (user['id'], friend['id'], friend['id'], user['id']))
+            existing = cur.fetchone()
+            if existing:
+                return jsonify({"error": f"Relationship already exists: {existing[0]}"}), 400
+                
+            cur.execute("""
+                INSERT INTO friendships (user_id, friend_id, status)
+                VALUES (%s, %s, 'pending')
+            """, (user['id'], friend['id']))
+            conn.commit()
+            return jsonify({"success": "Friend request sent!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+
+@app.route("/api/friends/respond", methods=["POST"])
+@require_user
+def friend_respond():
+    """Accept or reject a friend request."""
+    data = request.get_json() or {}
+    request_id = data.get("request_id")
+    action = data.get("action") # 'accepted' or 'rejected'
+    user = get_current_user()
+    
+    if action not in ['accepted', 'rejected']:
+        return jsonify({"error": "Invalid action"}), 400
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Ensure the request is directed TO the current user
+            cur.execute("SELECT user_id FROM friendships WHERE id = %s AND friend_id = %s", (request_id, user['id']))
+            if not cur.fetchone():
+                return jsonify({"error": "Request not found or not for you."}), 404
+                
+            cur.execute("UPDATE friendships SET status = %s WHERE id = %s", (action, request_id))
+            conn.commit()
+            return jsonify({"success": f"Request {action}!"})
+    finally:
+        conn.close()
+
+
+@app.route("/api/course/invite", methods=["POST"])
+@require_user
+def course_invite():
+    """Invite a friend to a course."""
+    data = request.get_json() or {}
+    friend_id = data.get("friend_id")
+    course_id = data.get("course_id")
+    user = get_current_user()
+    
+    if not are_friends(user['id'], friend_id):
+        return jsonify({"error": "You can only invite accepted friends."}), 403
+        
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Check for duplicate invite
+            cur.execute("SELECT status FROM course_invites WHERE from_user_id = %s AND to_user_id = %s AND course_id = %s",
+                       (user['id'], friend_id, course_id))
+            if cur.fetchone():
+                return jsonify({"error": "Invite already sent for this course."}), 400
+                
+            cur.execute("""
+                INSERT INTO course_invites (from_user_id, to_user_id, course_id, status)
+                VALUES (%s, %s, %s, 'pending')
+            """, (user['id'], friend_id, course_id))
+            conn.commit()
+            return jsonify({"success": "Course invite sent!"})
+    finally:
+        conn.close()
+
+
+@app.route("/api/course/invite/respond", methods=["POST"])
+@require_user
+def course_invite_respond():
+    """Respond to a course invite."""
+    data = request.get_json() or {}
+    invite_id = data.get("invite_id")
+    action = data.get("action") # 'accepted', 'rejected'
+    user = get_current_user()
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("SELECT * FROM course_invites WHERE id = %s AND to_user_id = %s", (invite_id, user['id']))
+            invite = cur.fetchone()
+            if not invite:
+                return jsonify({"error": "Invite not found"}), 404
+                
+            cur.execute("UPDATE course_invites SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s", (action, invite_id))
+            conn.commit()
+            
+            if action == 'accepted':
+                return jsonify({"success": "Invite accepted!", "course_id": invite['course_id']})
+                
+            return jsonify({"success": f"Invite {action}."})
+    finally:
+        conn.close()
+
+
+@app.route("/api/progress/update", methods=["POST"])
+@require_user
+def api_update_progress():
+    """Update progress for the current user."""
+    data = request.get_json() or {}
+    course_id = str(data.get("course_id"))
+    progress = data.get("progress")
+    user = get_current_user()
+    
+    if progress is None or not course_id:
+        return jsonify({"error": "Missing data"}), 400
+        
+    update_course_progress(user['id'], course_id, int(progress))
+    return jsonify({"success": "Progress updated!"})
+
+
+@app.route("/api/friends/progress/<course_id>")
+@require_user
+def api_friends_progress(course_id):
+    """View progress of friends enrolled in the same course."""
+    user = get_current_user()
+    conn = get_db_connection()
+    friends_progress = []
+    
+    if conn:
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT u.name, cp.progress_percent as progress
+                    FROM users u
+                    JOIN friendships f ON (f.friend_id = u.id OR f.user_id = u.id)
+                    JOIN courses_progress cp ON cp.user_id = u.id
+                    WHERE (f.user_id = %s OR f.friend_id = %s)
+                    AND f.status = 'accepted'
+                    AND u.id != %s
+                    AND cp.course_id = %s
+                """, (user['id'], user['id'], user['id'], str(course_id)))
+                friends_progress = cur.fetchall()
+        finally:
+            conn.close()
+            
+    return jsonify({"friends": friends_progress})
+
+@app.route("/api/friends/list")
+@require_user
+def api_friends_list():
+    """Return a list of accepted friends."""
+    user = get_current_user()
+    conn = get_db_connection()
+    friends = []
+    if conn:
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT u.id, u.name, u.email 
+                    FROM users u
+                    JOIN friendships f ON (f.friend_id = u.id OR f.user_id = u.id)
+                    WHERE (f.user_id = %s OR f.friend_id = %s)
+                    AND f.status = 'accepted'
+                    AND u.id != %s
+                """, (user['id'], user['id'], user['id']))
+                friends = cur.fetchall()
+        finally:
+            conn.close()
+    return jsonify({"friends": friends})
+
+@app.route("/api/progress/<course_id>")
+@require_user
+def api_get_progress(course_id):
+    """Return current user progress for a course."""
+    user = get_current_user()
+    conn = get_db_connection()
+    progress = 0
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT progress_percent FROM courses_progress WHERE user_id = %s AND course_id = %s", (user['id'], str(course_id)))
+                res = cur.fetchone()
+                if res:
+                    progress = res[0]
+        finally:
+            conn.close()
+    return jsonify({"progress": progress})
+
+
+# ══════════════════════════════════════════════════════════════════
 # STARTUP
 # ══════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
+    ensure_social_tables() # Ensure everything is ready
     start_scraper_thread(interval_hours=6)
-    if not os.path.exists(DB_FILE):
-        save_db({"users": []})
     print("\n🚀 LearnPath AI is running at http://127.0.0.1:5000\n")
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(debug=True, port=5000, use_reloader=True)
 

@@ -248,6 +248,9 @@
                 <a href="{{ url_for('mentor') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-mentor">
                     <i class="fa-solid fa-user-graduate {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_mentor') }}
                 </a>
+                <a href="{{ url_for('friends_page') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" id="nav-friends">
+                    <i class="fa-solid fa-user-group {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_friends') }}
+                </a>
                 {% else %}
                 <a href="{{ url_for('onboard') }}" class="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all shadow-lg shadow-primary-500/20" id="nav-onboard">
                     <i class="fa-solid fa-rocket {{ 'ms-1' if lang == 'ar' else 'me-1' }}"></i>{{ t('nav_onboard') }}
@@ -263,9 +266,18 @@
                     🌐 {{ t('nav_lang') }}
                 </a>
                 {% if current_user %}
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold" id="user-avatar">
-                    {{ current_user.name[0]|upper }}
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold" id="user-avatar" title="{{ current_user.email }}">
+                        {{ current_user.name[0]|upper }}
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="text-xs text-slate-400 hover:text-red-400 transition-colors" title="{{ t('btn_logout') }}">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
                 </div>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="text-sm font-semibold text-slate-300 hover:text-white transition-all px-2">
+                    {{ t('btn_login') }}
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -296,6 +308,10 @@
             <a href="{{ url_for('mentor') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
                 <i class="fa-solid fa-user-graduate text-base"></i>
                 <span>{{ t('nav_mentor') }}</span>
+            </a>
+            <a href="{{ url_for('friends_page') }}" class="flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-primary-400 transition-colors p-2">
+                <i class="fa-solid fa-user-group text-base"></i>
+                <span>{{ t('nav_friends') }}</span>
             </a>
             {% else %}
             <a href="{{ url_for('onboard') }}" class="flex flex-col items-center gap-1 text-xs text-primary-400 transition-colors p-2">

@@ -132,6 +132,69 @@
                 </a>
             </div>
 
+            <!-- ── Friends Learning (Social Dashboard) ── -->
+            {% if active_enr %}
+            <div class="glass-card p-6 animate-fade-in-up border-primary-500/10" id="friends-activity-section" style="animation-delay: 0.15s">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-users text-primary-400"></i>
+                        Friends Learning Too
+                    </h3>
+                    <a href="{{ url_for('friends_page') }}" class="text-[10px] uppercase tracking-wider text-primary-400 font-bold hover:underline">Manage Society</a>
+                </div>
+                
+                <div id="dashboard-friends-list" class="space-y-4">
+                    <!-- Progress bars for friends in THIS active course -->
+                    <div class="animate-pulse flex space-x-4">
+                        <div class="rounded-full bg-white/5 h-10 w-10"></div>
+                        <div class="flex-1 space-y-3 py-1">
+                            <div class="h-2 bg-white/5 rounded"></div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="h-2 bg-white/5 rounded col-span-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    function loadDashboardFriends() {
+                        const activeCourseId = "{{ active_enr.course_id }}";
+                        fetch('/api/friends/progress/' + activeCourseId)
+                            .then(r => r.json())
+                            .then(data => {
+                                const container = document.getElementById('dashboard-friends-list');
+                                if (data.friends && data.friends.length > 0) {
+                                    container.innerHTML = data.friends.map(f => `
+                                        <div class="flex items-center gap-4 group">
+                                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-primary-400 border border-primary-500/20">
+                                                ${f.name[0].toUpperCase()}
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex justify-between items-center mb-1.5">
+                                                    <span class="text-xs font-bold text-white">${f.name}</span>
+                                                    <span class="text-[10px] font-mono text-primary-300 font-bold">${f.progress}%</span>
+                                                </div>
+                                                <div class="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
+                                                    <div class="h-full bg-gradient-to-r from-primary-600 to-accent-400 transition-all duration-1000" style="width: ${f.progress}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('');
+                                } else {
+                                    container.innerHTML = `
+                                        <div class="text-center py-4">
+                                            <p class="text-xs text-slate-500 italic mb-2">Competing makes you learn faster!</p>
+                                            <button onclick="window.location.href='/course/${activeCourseId}'" class="text-[10px] font-bold text-primary-400 uppercase tracking-tighter">Invite friends to this course &nearrow;</button>
+                                        </div>
+                                    `;
+                                }
+                            });
+                    }
+                    setTimeout(loadDashboardFriends, 500);
+                </script>
+            </div>
+            {% endif %}
+
             <!-- ── Enrolled Courses ── -->
             {% if user.enrolled_courses %}
             <div class="glass-card p-6 animate-fade-in-up" id="enrolled-section" style="animation-delay: 0.2s">
