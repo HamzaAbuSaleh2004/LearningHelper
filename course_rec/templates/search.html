@@ -63,7 +63,13 @@
     <!-- Results Grid -->
     <div class="max-w-5xl mx-auto space-y-4" id="search-results">
         {% for course in recommendations %}
-        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="result-{{ loop.index0 }}">
+        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up relative" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="result-{{ loop.index0 }}">
+            {% if loop.first %}
+            <div class="absolute top-0 {{ 'left-0 rounded-br-xl' if lang == 'ar' else 'right-0 rounded-bl-xl' }} z-20 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 font-black text-[11px] uppercase tracking-widest shadow-md flex items-center gap-1.5">
+                <i class="fa-solid fa-crown text-[11px]"></i>
+                Best Match
+            </div>
+            {% endif %}
             <div class="flex flex-col sm:flex-row">
                 <!-- Score indicator -->
                 <div class="sm:w-28 p-4 flex sm:flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-500/10 to-accent-500/10 border-b sm:border-b-0 sm:border-{{ 'l' if lang == 'ar' else 'r' }} border-white/5">

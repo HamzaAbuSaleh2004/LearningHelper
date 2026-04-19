@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Friends &amp; Social Learning - LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6ddd81",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "outline": "#717786",
+                        "tertiary": "#b51b15",
+                        "on-tertiary-fixed": "#410001",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00722f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#0058bc",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#0070eb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#d9372b",
+                        "surface-dim": "#d9dadb",
+                        "surface-container": "#edeeef",
+                        "secondary-container": "#86f898",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#930004",
+                        "surface-tint": "#005bc1",
+                        "outline-variant": "#c1c6d7",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#001a41",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed": "#002108",
+                        "secondary": "#006e2c",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#89fa9b",
+                        "surface-container-low": "#f3f4f5",
+                        "on-surface-variant": "#414755",
+                        "on-primary-container": "#fefcff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#005320",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .text-display-lg { font-size: 3.5rem; line-height: 4rem; letter-spacing: -0.02em; }
+        .text-display-md { font-size: 2.8125rem; line-height: 3.25rem; letter-spacing: -0.02em; }
+        .text-headline-sm { font-size: 1.5rem; line-height: 2rem; letter-spacing: -0.02em; }
+        .text-body-md { font-size: 1rem; line-height: 1.5rem; }
+        .text-body-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-label-md { font-size: 0.75rem; line-height: 1rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        
+        /* High-precision 1px Ghost Border */
+        .ghost-border {
+            border: 1px solid rgba(193, 198, 215, 0.2);
+        }
+        
+        /* Pulse Border for AI Elements */
+        .ai-pulse-border {
+            border: 1px solid transparent;
+            background: linear-gradient(white, white) padding-box, 
+                        linear-gradient(135deg, #0058bc, #006e2c) border-box;
+        }
+
+        /* Ambient Shadow */
+        .ambient-shadow {
+            box-shadow: 0 32px 64px rgba(25, 28, 29, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background flex min-h-screen font-body antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-slate-50 dark:bg-slate-900 bg-surface-container-low border-r border-slate-200/20 dark:border-slate-800/20 z-40">
+<div class="flex items-center gap-3 p-6 mb-4">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary font-bold text-xl ghost-border">
+                L
+            </div>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white font-headline text-on-surface">LearnPath AI</h1>
+<p class="text-xs text-on-surface-variant font-medium">Intelligent Navigator</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2 p-4">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20 text-on-surface-variant font-medium" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20 text-on-surface-variant font-medium" href="#">
+<span class="material-symbols-outlined text-xl">school</span>
+<span class="text-label-md">Learning</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20 text-on-surface-variant font-medium" href="#">
+<span class="material-symbols-outlined text-xl">auto_stories</span>
+<span class="text-label-md">Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-950 rounded-lg shadow-sm font-bold border-l-4 border-blue-600 bg-surface-container-lowest text-primary ambient-shadow" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-label-md">Friends</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20 text-on-surface-variant font-medium" href="#">
+<span class="material-symbols-outlined text-xl">analytics</span>
+<span class="text-label-md">Analytics</span>
+</a>
+</div>
+<div class="p-4 mt-auto">
+<button class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity ghost-border flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Start New Course
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 relative min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-6 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)] ghost-border bg-surface-container-lowest/80 backdrop-blur-[20px]">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Trigger (Hidden on Desktop) -->
+<button class="md:hidden text-on-surface hover:bg-surface-container p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:flex items-center relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-full py-2 pl-10 pr-4 text-sm text-on-surface focus:outline-none focus:border-primary transition-colors focus:ring-0 placeholder:text-on-surface-variant/50" placeholder="Search friends, courses..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-tertiary-container rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 bg-surface-container-high cursor-pointer">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of young professional woman with warm natural lighting and soft blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZd4bBr8xqJX6lYAahrA0OKRyxyVttFhNfqyyWGnCyPNCEbwLkSJU-maucqSaKDzxYs9sinjOVyhPPueopIPXzkkrac3XROlr81MNsqLpegYHMxzW7hitdaRqEjiLgvr0yXpzyB2tORG7lFXJnoal2VU1fFZKfZvQCcRvXwXtaBYSGgYjr5c1UIoP041y-jBkb0G_itRzVgRSO8Z-EaUDeRjSo190P-K7CSV91ueR2ykcfCsaOfxoDtnbUFsl1Vu5cITWSPsVl5CU"/>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+<!-- Page Header -->
+<div class="flex flex-col gap-2">
+<h2 class="text-display-md font-headline font-bold text-on-surface tracking-tight">Social Learning Network</h2>
+<p class="text-body-md text-on-surface-variant max-w-2xl">Connect with peers, track collaborative progress, and accelerate your learning journey together.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Pending & Active Friends -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<!-- Pending Requests (Action Layer) -->
+<section class="bg-surface-container-lowest rounded-xl p-6 ghost-border ambient-shadow relative overflow-hidden">
+<!-- Decorative AI pulse in background -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+<div class="flex items-center justify-between mb-6 relative z-10">
+<h3 class="text-headline-sm font-headline font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">person_add</span>
+                                Pending Requests
+                            </h3>
+<span class="bg-primary/10 text-primary text-label-md px-2 py-1 rounded-full font-bold">2</span>
+</div>
+<div class="space-y-4">
+<!-- Request 1 -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="Alex Chen" class="w-full h-full object-cover" data-alt="Portrait of young professional man smiling softly with natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFCEgkJDCZqJPFuUL1LdhxOQF4qT1bdxI1tfqXduKDEx1iezf75Ne4PWepUJYqKtYQr7BNZ-4HeTXcx24-04bEvQnyTrzgnYv_kbBFx25Elb7wVkx4bVOckz6D5y_NKeFtwPDuabzzCbZ1PfhxigMD2wmYa8VsICWUE-gpcPBSDRa0g-v5VQQwouWkOpFbNfMkWBgJUOo3ICVPIi2NMNRM1h6b2_o968ACXIzbnfVEbm6RvAlZmpMFmQVBk_sJjgOtwDvndSmW8nY"/>
+</div>
+<div>
+<p class="text-body-md font-medium text-on-surface">Alex Chen</p>
+<p class="text-body-sm text-on-surface-variant">Data Science Track</p>
+</div>
+</div>
+<div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error hover:text-on-error transition-colors">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+<!-- Request 2 -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="Sarah Jenkins" class="w-full h-full object-cover" data-alt="Portrait of young woman with short hair and glasses in bright modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoD0mkmbz5ucp5LXOyouY66Hqv6wVnqiN1C9ymovuNrX034r5NvQCPoJeksNC6B8L86JjvoYdbGVV46nHK-57M4DUp9SP_lAU7Vyfa1zlq17AQMsxrlYxukaIzzpxf3bvkttW4cgOV5OeoooKP5SzuuzZLogqWt_VwpW8rhyOjYQHOY4L5UrVBonaEfT11sZ-bWfT1rw2X-n4wjTxromYC6Toboc1jm4a77qs8oPDA__pdlSJKSebZM-o9BYBXZdAukXUvBkGkU-c"/>
+</div>
+<div>
+<p class="text-body-md font-medium text-on-surface">Sarah Jenkins</p>
+<p class="text-body-sm text-on-surface-variant">UX/UI Fundamentals</p>
+</div>
+</div>
+<div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center hover:bg-error hover:text-on-error transition-colors">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Friends List -->
+<section class="bg-surface-container-lowest rounded-xl p-6 ghost-border flex-1">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-headline-sm font-headline font-semibold text-on-surface">Your Network</h3>
+<button class="text-primary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+<div class="space-y-6">
+<!-- Friend 1 -->
+<div class="flex items-center gap-4 cursor-pointer group">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high group-hover:ring-2 ring-primary/20 transition-all">
+<img alt="David Kim" class="w-full h-full object-cover" data-alt="Portrait of middle aged man with beard looking confident in natural outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZfVkZB0awmll50kT6VxDWTIXEsH0D3awmjDu8epsr-v54ve2NnsQ5MwvDT0gwXtAmn2f4OKi8wDpYI7akSDVyTRKjb2AqvOuJvYbvjfIxkqaCNRQnlwr3ehM3GZgnNjsOl_DZ49Ag--C_nPBJs9Kev2SQOB8IPVaivVO_vyJ3c_ol0gdbJ3Rml3UXKNNdomhh-Z4vWQEuU87uFHWNZCac8ZCAfsWaxYtnZQTo9nrEOk4JfvIWVl7hpfTNltbbVj1lhsjekXSKu98"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary-container border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1">
+<p class="text-body-md font-medium text-on-surface group-hover:text-primary transition-colors">David Kim</p>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+                                         12 Day Streak
+                                     </p>
+</div>
+</div>
+<!-- Friend 2 -->
+<div class="flex items-center gap-4 cursor-pointer group">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high group-hover:ring-2 ring-primary/20 transition-all">
+<img alt="Emma Thompson" class="w-full h-full object-cover" data-alt="Portrait of young woman smiling gently in soft warm indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUh6znDSlIt-ZfLOLfwTZBpKtSZ8WzS_4XdiHi4_EUYPy-7EXQMo_gD1qIpdxoKeUBVcqbqk_WM91u2mNAbPz8wsqFDS6QipaTuP_4WVEFH-XKmQ_q9WkunGJikPs5xeEIxQLk9QM2OnwZIWHJyGKom08F1U5wsrNS8FmsdzNfXXdMluwHap4Ee-51tyz7YPLCRLFVKtTCvuGxkQY12E2BUw6ZW9MFIY3IWWZ6mex8ej9RHBhXE7sX1sVHHy1tztk6bAYrMCfyjXE"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-surface-variant border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1">
+<p class="text-body-md font-medium text-on-surface group-hover:text-primary transition-colors">Emma Thompson</p>
+<p class="text-body-sm text-on-surface-variant">Last active 2h ago</p>
+</div>
+</div>
+<!-- Friend 3 -->
+<div class="flex items-center gap-4 cursor-pointer group">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high group-hover:ring-2 ring-primary/20 transition-all">
+<img alt="Marcus Johnson" class="w-full h-full object-cover" data-alt="Portrait of professional man in business casual attire with modern office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2fR1fFcv1ZNvlVcNXrL3AO3MkxrsHYY69fGJOGUFd20L6mYe0aLioF-y7lFNL8cu5VKeNgsYVGdzZXBEl1v6bkJQmhx6kxIN2sv3lw6siwtA8vzkwGA5YmiS1vLlU7l484AhUksm3Xg373T95pLOTtNrwdL5b-LLgSbPQlEOFKFWELvHphT6Tx9PLY_HrcgVuWi0XlDMhVGDQ2Q-sxUer_9ExGYJXyqa_6ad_meN90you5s6qg13cc1yhHyKDRnAtbc9VZmjxG2o"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary-container border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1">
+<p class="text-body-md font-medium text-on-surface group-hover:text-primary transition-colors">Marcus Johnson</p>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+                                         5 Day Streak
+                                     </p>
+</div>
+</div>
+</div>
+<button class="mt-8 text-primary text-sm font-medium hover:text-primary-container transition-colors w-full text-left">View all 24 connections →</button>
+</section>
+</div>
+<!-- Right Column: Collaboration Tracker -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Main Collaboration Canvas -->
+<section class="bg-surface-container-lowest rounded-xl p-8 ghost-border min-h-[600px] flex flex-col relative overflow-hidden">
+<!-- Subtle mesh background for 'Milled' aesthetic -->
+<div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, black 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 relative z-10 border-b border-surface-variant/50 pb-6">
+<div>
+<span class="bg-surface-container-low text-on-surface-variant px-3 py-1 rounded text-label-md font-bold mb-3 inline-block ghost-border">Shared Module</span>
+<h3 class="text-display-md font-headline font-bold text-on-surface tracking-tight leading-tight">Advanced Machine Learning Algorithms</h3>
+</div>
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-lowest overflow-hidden z-20">
+<img alt="You" class="w-full h-full object-cover" data-alt="Close up portrait of young professional woman with warm natural lighting and soft blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuNEztfuaRNo0qIdVi78R_1TiirdFLzU4wmxy1JQs2MB37aowe7YzvMJjzLUHCTofxSVdPhKSH0LRhMuu7DbxdZ0h6_yYoVd7XjCAmTHOpo3gSOJceF6qfLLU6y-0lPkCihOQ31RW3LEMXohsl14arGgZOyS1Wnd9ymU2hyBUFTkWIRaEsLMHqGedcoCkNL_j8nht1OlTSVIwpErO0adH_4JFzSH1NamRVtq9dItJgHisQqApcNTuyzDemeeb7tbVGEBsBqKFCiAw"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-lowest overflow-hidden z-10">
+<img alt="David Kim" class="w-full h-full object-cover" data-alt="Portrait of middle aged man with beard looking confident in natural outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbgs9O7B431e0cIgzF_bC_rk3CHi9TDuNESXBzf-76SX8o8UXmSbdccbMASKQeYRQCDfCRkLzVM7xQgIYhroJZoU6w1VRIKwdFfLyqGgmEkPA6hgTKGocBiv_-AJOUUMxmRh70DEA2t3f80oIXnd8ERrK-Usb4Co9UyOpGSUtqTLnlr2zKUkl_Uikjcct2g5Wzp8nM5kHhajTMhNZAP20fiDsvJbVS7QO9nZkMXu7vW8X64tohg7ApyWCZ3uyruBMfXV2jWW92Wdw"/>
+</div>
+</div>
+</div>
+<!-- Progress Visualization -->
+<div class="relative z-10 flex-1 flex flex-col gap-6">
+<!-- Your Progress -->
+<div class="bg-surface-container-low rounded-lg p-5 ghost-border">
+<div class="flex justify-between items-center mb-3">
+<span class="text-body-sm font-medium text-on-surface">Your Progress</span>
+<span class="text-label-md text-primary font-bold">68%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full" style="width: 68%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2">Current: Neural Networks Part 2</p>
+</div>
+<!-- Partner Progress -->
+<div class="bg-surface-container-low rounded-lg p-5 ghost-border opacity-80">
+<div class="flex justify-between items-center mb-3">
+<span class="text-body-sm font-medium text-on-surface">David's Progress</span>
+<span class="text-label-md text-on-surface-variant font-bold">45%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-surface-variant rounded-full" style="width: 45%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant mt-2">Current: Support Vector Machines</p>
+</div>
+<!-- AI Synchronization Suggestion -->
+<div class="mt-auto bg-surface-container-lowest p-6 rounded-lg ai-pulse-border ambient-shadow relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="flex gap-4 relative z-10">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<div>
+<h4 class="text-body-md font-bold text-on-surface mb-1">Pace Mismatch Detected</h4>
+<p class="text-body-sm text-on-surface-variant leading-relaxed">You are currently 2 modules ahead of David. Consider pausing to review <span class="font-medium text-on-surface">Support Vector Machines</span> together to reinforce your learning and help him catch up.</p>
+<div class="mt-4 flex gap-3">
+<button class="px-4 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded text-sm font-semibold ghost-border hover:shadow-lg transition-shadow">Suggest Study Session</button>
+<button class="px-4 py-2 bg-transparent text-primary hover:bg-surface-container-high rounded text-sm font-medium transition-colors">Dismiss</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body></html>

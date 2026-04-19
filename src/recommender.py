@@ -65,4 +65,7 @@ class CourseRecommender:
             # Boost logic
             results.loc[results['level'] == user_level, 'score'] += 0.1
 
+        # Clamp score to [0, 1] so the UI never shows >100% match
+        results['score'] = results['score'].clip(upper=1.0)
+
         return results.sort_values(by='score', ascending=False).head(top_n)

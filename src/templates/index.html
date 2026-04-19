@@ -1,240 +1,517 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Course Navigator</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #4F46E5;
-            /* Indigo */
-            --secondary-color: #10B981;
-            /* Emerald */
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LearnPath AI — Semantic Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0058bc",
+          "primary-container": "#0070eb",
+          "on-primary": "#ffffff",
+          "on-primary-container": "#fefcff",
+          "primary-fixed": "#d8e2ff",
+          "primary-fixed-dim": "#adc6ff",
+          "secondary": "#006e2c",
+          "secondary-container": "#86f898",
+          "on-secondary-container": "#00722f",
+          "on-secondary": "#ffffff",
+          "tertiary": "#b51b15",
+          "tertiary-container": "#d9372b",
+          "on-tertiary-container": "#fffbff",
+          "surface": "#f8f9fa",
+          "surface-bright": "#f8f9fa",
+          "surface-dim": "#d9dadb",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f3f4f5",
+          "surface-container": "#edeeef",
+          "surface-container-high": "#e7e8e9",
+          "surface-container-highest": "#e1e3e4",
+          "on-surface": "#191c1d",
+          "on-surface-variant": "#414755",
+          "outline": "#717786",
+          "outline-variant": "#c1c6d7",
+          "background": "#f8f9fa",
+          "on-background": "#191c1d",
+          "error": "#ba1a1a",
+          "on-error": "#ffffff",
+          "error-container": "#ffdad6",
+          "inverse-surface": "#2e3132",
+          "inverse-on-surface": "#f0f1f2",
+          "inverse-primary": "#adc6ff",
+          "surface-tint": "#005bc1",
+          "surface-variant": "#e1e3e4"
+        },
+        borderRadius: {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        fontFamily: {
+          "headline": ["Inter", "sans-serif"],
+          "body": ["Inter", "sans-serif"],
+          "label": ["Inter", "sans-serif"]
         }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .ghost-border { box-shadow: inset 0 0 0 1px rgba(193, 198, 215, 0.2); }
+  .pulse-border {
+    border: 1px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #0058bc, #006e2c) border-box;
+  }
+  .task-done { text-decoration: line-through; opacity: 0.6; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            color: #333;
-            padding-bottom: 80px;
-            /* Space for sticky footer */
-        }
+  /* Scroll animations */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .scroll-animate.visible { opacity: 1; transform: none; }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes correctPulse {
+    0%, 100% { box-shadow: 0 0 0 0px rgba(29,158,117,0); }
+    50%       { box-shadow: 0 0 0 6px rgba(29,158,117,0.4); }
+  }
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-8px); }
+    40%     { transform: translateX(8px); }
+    60%     { transform: translateX(-5px); }
+    80%     { transform: translateX(5px); }
+  }
 
-        /* Hero Section */
-        .hero-section {
-            background: white;
-            padding: 3rem 1rem;
-            border-radius: 0 0 2rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .hero-title {
-            font-weight: 800;
-            background: linear-gradient(to right, #4F46E5, #8B5CF6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Search Box */
-        .form-control-lg {
-            border-radius: 50px;
-            padding-left: 1.5rem;
-            border: 2px solid #e0e0e0;
-        }
-
-        .form-control-lg:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-        }
-
-        /* Card Styling */
-        .course-card {
-            border: none;
-            border-radius: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            transition: transform 0.2s;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        /* Checkbox Header Area */
-        .card-header-custom {
-            background: #f8f9fa;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 1rem;
-        }
-
-        /* Custom Checkbox */
-        .form-check-input {
-            cursor: pointer;
-            width: 1.3em;
-            height: 1.3em;
-        }
-
-        .match-badge {
-            background-color: #ECFDF5;
-            color: var(--secondary-color);
-            font-weight: 700;
-            padding: 0.35em 0.8em;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        /* Loading Overlay */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            flex-direction: column;
-        }
-    </style>
+  /* ARIA Robot */
+  #aria-stage-wrapper {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 170px;
+    z-index: 999;
+    pointer-events: none;
+  }
+  #aria-stage-wrapper #aria-stage,
+  #aria-stage-wrapper #aria-robot { pointer-events: auto; }
+  #aria-hud, #aria-streak { display: none !important; }
+  #aria-bubble {
+    box-shadow: 0 8px 32px rgba(25, 28, 29, 0.12);
+    border: 1px solid rgba(193, 198, 215, 0.25);
+  }
+  @media (max-width: 768px) {
+    #aria-stage-wrapper { width: 130px; }
+    #aria-stage { height: 180px !important; }
+  }
+</style>
 </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body">
 
-<body>
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="hidden fixed inset-0 bg-white/90 backdrop-blur-sm z-[9999] flex-col items-center justify-center gap-4">
+  <div class="w-12 h-12 rounded-full border-4 border-primary-fixed border-t-primary animate-spin"></div>
+  <p class="text-on-surface font-semibold tracking-tight">AI is analyzing courses...</p>
+  <p class="text-on-surface-variant text-sm">Powered by SBERT Semantic Search</p>
+</div>
 
-    <div id="loading-overlay">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-        <h4 class="mt-3 fw-bold text-secondary">AI is analyzing courses...</h4>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-surface-container-low z-40 border-r border-outline-variant/20">
+  <div class="flex items-center gap-3 px-6 py-8">
+    <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1">school</span>
+    <div>
+      <h1 class="text-lg font-black tracking-tighter text-on-surface">LearnPath AI</h1>
+      <p class="text-xs text-on-surface-variant font-medium">Intelligent Navigator</p>
     </div>
+  </div>
+  <div class="flex flex-col gap-1 px-4 flex-grow">
+    <a href="/" class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-lowest rounded-lg shadow-sm font-bold border-l-4 border-primary text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">auto_awesome</span>
+      Search
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">dashboard</span>
+      Overview
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">auto_stories</span>
+      Catalog
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">group</span>
+      Friends
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">analytics</span>
+      Analytics
+    </a>
+  </div>
+  <div class="p-4">
+    <button class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg font-semibold tracking-wide shadow-md hover:opacity-90 transition-opacity text-sm flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined text-sm">add</span>
+      Start New Course
+    </button>
+  </div>
+</nav>
 
-    <div class="hero-section">
-        <div class="container">
-            <h1 class="display-4 hero-title"><i class="fa-solid fa-robot"></i> AI Course Navigator</h1>
-            <p class="lead text-muted mb-4">Find the best courses and generate a personalized schedule.</p>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
 
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <form method="POST" action="/" onsubmit="showLoading()">
-                        <div class="input-group input-group-lg">
-                            <input type="text" name="search_query" class="form-control"
-                                placeholder="e.g. I want to learn Python for Data Science..." value="{{ search_query }}"
-                                required>
+  <!-- Mobile Header -->
+  <header class="md:hidden flex justify-between items-center h-16 px-6 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)] border-b border-outline-variant/20">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1">school</span>
+      <h1 class="text-xl font-bold tracking-tight text-on-surface">LearnPath AI</h1>
+    </div>
+    <button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-full">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </header>
 
-                            <select name="level" class="form-select" style="max-width: 150px;">
-                                <option value="All Levels" {% if selected_level=='All Levels' %}selected{% endif %}>All
-                                    Levels</option>
-                                <option value="Beginner Level" {% if selected_level=='Beginner Level' %}selected{% endif
-                                    %}>Beginner</option>
-                                <option value="Intermediate Level" {% if selected_level=='Intermediate Level'
-                                    %}selected{% endif %}>Intermediate</option>
-                                <option value="Expert Level" {% if selected_level=='Expert Level' %}selected{% endif %}>
-                                    Expert</option>
-                            </select>
+  <!-- Search Canvas -->
+  <div class="flex-1 p-6 lg:p-12 bg-surface">
+    <div class="max-w-5xl mx-auto">
 
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="fa-solid fa-magnifying-glass"></i> Search
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <!-- Page Header & AI Status -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div class="max-w-2xl">
+          <h2 class="text-4xl md:text-5xl font-extrabold tracking-[-0.02em] text-on-surface font-headline mb-4 leading-tight">
+            Semantic Intelligence
+          </h2>
+          <p class="text-lg text-on-surface-variant font-body">
+            Search concepts, skills, or questions. Our AI understands context, not just keywords.
+          </p>
         </div>
-    </div>
+        <div class="flex items-center gap-2 bg-secondary-container/20 px-4 py-2 rounded-full border border-secondary-container/50 shrink-0">
+          <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+          <span class="text-xs font-bold text-on-secondary-container uppercase tracking-wider font-label">SBERT Active</span>
+        </div>
+      </div>
 
-    <div class="container pb-5">
-        {% if request.method == 'POST' %}
+      <!-- Search Form -->
+      <form method="POST" action="/" onsubmit="showLoading()">
+        <div class="relative w-full mb-16">
+          <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+            <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+          </div>
+          <input
+            type="text"
+            name="search_query"
+            value="{{ search_query }}"
+            class="w-full bg-surface-container-lowest text-on-surface text-lg md:text-2xl py-6 pl-20 pr-4 pb-20 md:pb-6 md:pr-52 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary shadow-[0_8px_30px_rgb(0,0,0,0.04)] pulse-border font-body placeholder:text-outline/50 transition-all duration-300"
+            placeholder="e.g. 'I want to learn Python for Data Science...'"
+            required
+          />
+          <div class="absolute bottom-4 right-4 md:inset-y-0 md:right-4 md:top-0 flex items-center gap-2">
+            <select name="level" class="bg-surface-container text-on-surface-variant text-sm px-3 py-2 rounded-lg border border-outline-variant/30 outline-none font-label cursor-pointer focus:ring-1 focus:ring-primary">
+              <option value="All Levels" {% if selected_level=='All Levels' %}selected{% endif %}>All Levels</option>
+              <option value="Beginner Level" {% if selected_level=='Beginner Level' %}selected{% endif %}>Beginner</option>
+              <option value="Intermediate Level" {% if selected_level=='Intermediate Level' %}selected{% endif %}>Intermediate</option>
+              <option value="Expert Level" {% if selected_level=='Expert Level' %}selected{% endif %}>Expert</option>
+            </select>
+            <button type="submit" class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-95 font-label">
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Results Section -->
+      {% if request.method == 'POST' %}
 
         {% if recommendations %}
+
+        <div class="mb-6">
+          <h3 class="text-sm font-bold text-on-surface uppercase tracking-widest font-label mb-1">
+            Top Semantic Matches
+          </h3>
+          <p class="text-on-surface-variant text-sm">
+            Found <strong>{{ recommendations|length }}</strong> results for
+            "<span class="text-primary font-semibold">{{ search_query }}</span>"
+          </p>
+        </div>
+
         <form action="/personalize" method="POST">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-28">
 
-            <h3 class="mb-4 text-center fw-bold">
-                Found {{ recommendations|length }} matches for "<span class="text-primary">{{ search_query }}</span>"
-            </h3>
+            {% for course in recommendations %}
 
-            <div class="row g-4 mb-5">
-                {% for course in recommendations %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="course-card shadow-sm h-100">
-
-                        <div class="card-header-custom d-flex align-items-center gap-2">
-                            <input class="form-check-input" type="checkbox" name="selected_courses"
-                                value="{{ course.course_title }}" checked>
-                            <span class="fw-bold">Select this course</span>
-                        </div>
-
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold text-dark">{{ course.course_title }}</h5>
-
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-secondary">{{ course.level }}</span>
-                                <span class="match-badge">
-                                    <i class="fa-solid fa-check-circle"></i> {{ (course.score * 100) | round }}% Match
-                                </span>
-                            </div>
-
-                            <p class="card-text text-muted small">
-                                <i class="fa-solid fa-book-open me-2"></i> Subject: <strong>{{ course.subject
-                                    }}</strong>
-                            </p>
-
-                            <div class="alert alert-light border mt-3 p-2 small">
-                                <i class="fa-solid fa-lightbulb text-warning"></i>
-                                <strong>AI Reason:</strong> High semantic match for {{ course.subject }}.
-                            </div>
-                        </div>
-
-                        <div class="card-footer bg-white border-top-0 pb-3">
-                            <a href="{{ course.url }}" target="_blank"
-                                class="btn btn-outline-primary w-100 btn-sm rounded-pill">
-                                View on Udemy <i class="fa-solid fa-external-link-alt ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
+            {% if loop.first %}
+            <!-- Hero Card: Top Match -->
+            <div class="md:col-span-8 bg-surface-container-lowest rounded-xl ghost-border overflow-hidden flex flex-col md:flex-row hover:shadow-[0_20px_40px_rgba(25,28,29,0.06)] transition-shadow duration-300 relative">
+              <!-- Best Match Ribbon -->
+              <div class="absolute top-0 right-0 z-20 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 font-black text-[11px] uppercase tracking-widest rounded-bl-xl shadow-md flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1">workspace_premium</span>
+                Best Match
+              </div>
+              <div class="absolute top-4 left-4 z-10 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-md border border-primary/20 flex items-center gap-1">
+                <span class="material-symbols-outlined text-primary text-sm">target</span>
+                <span class="text-primary font-bold text-sm font-label">{{ (course.score * 100) | round }}% Match</span>
+              </div>
+              <div class="p-8 flex flex-col justify-center flex-1">
+                <div class="flex gap-2 mb-4 flex-wrap">
+                  <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold uppercase tracking-wide font-label">{{ course.level }}</span>
+                  <span class="bg-surface-container text-on-surface-variant text-xs px-2 py-1 rounded font-bold uppercase tracking-wide font-label">{{ course.subject }}</span>
                 </div>
-                {% endfor %}
+                <h4 class="text-2xl font-bold font-headline tracking-tight text-on-surface mb-3">{{ course.course_title }}</h4>
+                <p class="text-on-surface-variant font-body mb-6 text-sm leading-relaxed">
+                  High semantic match for <strong>{{ course.subject }}</strong>. Curated to align with your stated learning objective.
+                </p>
+                <div class="flex items-center gap-4 mt-auto flex-wrap">
+                  <label class="flex items-center gap-2 cursor-pointer group">
+                    <input type="checkbox" name="selected_courses" value="{{ course.course_title }}" checked
+                      class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest">
+                    <span class="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">Select this course</span>
+                  </label>
+                  <a href="{{ course.url }}" target="_blank" class="text-primary font-bold font-label hover:text-primary-container transition-colors flex items-center gap-1 text-sm">
+                    View on Udemy
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div class="fixed-bottom p-3 bg-white shadow-lg border-top text-center">
-                <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow">
-                    Next: Personalize Schedule <i class="fa-solid fa-arrow-right"></i>
-                </button>
+            {% elif loop.index == 2 %}
+            <!-- Secondary Hero Card -->
+            <div class="md:col-span-4 bg-surface-container-lowest rounded-xl ghost-border p-6 hover:shadow-[0_20px_40px_rgba(25,28,29,0.06)] transition-shadow duration-300 flex flex-col">
+              <div class="flex justify-between items-start mb-4">
+                <div class="bg-surface-container-lowest px-2 py-1 rounded-md border border-secondary/20 flex items-center gap-1">
+                  <span class="text-secondary font-bold text-xs font-label">{{ (course.score * 100) | round }}% Match</span>
+                </div>
+                <label class="cursor-pointer">
+                  <input type="checkbox" name="selected_courses" value="{{ course.course_title }}" checked
+                    class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary">
+                </label>
+              </div>
+              <h4 class="text-lg font-bold font-headline tracking-tight text-on-surface mb-2">{{ course.course_title }}</h4>
+              <p class="text-on-surface-variant font-body text-sm mb-4 flex-1">{{ course.subject }} · {{ course.level }}</p>
+              <div class="flex items-center gap-3 pt-4 border-t border-surface-variant">
+                <a href="{{ course.url }}" target="_blank" class="text-primary font-bold text-sm font-label hover:text-primary-container transition-colors flex items-center gap-1">
+                  View on Udemy <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+              </div>
             </div>
 
+            {% else %}
+            <!-- Standard Course Card -->
+            <article class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-3 shadow-[0_4px_32px_rgba(25,28,29,0.03)] hover:-translate-y-1 hover:shadow-[0_12px_48px_rgba(25,28,29,0.06)] transition-all duration-300 ghost-border">
+              <div class="flex justify-between items-start">
+                <div class="flex gap-2 flex-wrap">
+                  <span class="bg-surface-container text-on-surface-variant text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wide">{{ course.level }}</span>
+                  <span class="bg-primary/10 text-primary text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wide">{{ course.subject }}</span>
+                </div>
+                <label class="cursor-pointer shrink-0">
+                  <input type="checkbox" name="selected_courses" value="{{ course.course_title }}" checked
+                    class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary">
+                </label>
+              </div>
+              <h3 class="text-base font-bold text-on-surface tracking-tight leading-snug">{{ course.course_title }}</h3>
+              <div class="flex items-center justify-between mt-auto pt-3 border-t border-surface-variant">
+                <span class="text-xs font-bold text-secondary font-label">{{ (course.score * 100) | round }}% Match</span>
+                <a href="{{ course.url }}" target="_blank" class="text-primary font-bold text-xs font-label hover:text-primary-container transition-colors flex items-center gap-1">
+                  View <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+              </div>
+            </article>
+            {% endif %}
+
+            {% endfor %}
+
+          </div>
+
+          <!-- Sticky Bottom CTA Bar -->
+          <div class="fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-variant/20 shadow-[0_-8px_32px_rgba(0,0,0,0.04)] flex items-center justify-between z-40">
+            <p class="text-sm text-on-surface-variant font-label hidden md:block">
+              <span class="font-bold text-on-surface">{{ recommendations|length }}</span> courses found · Select to include in your plan
+            </p>
+            <button type="submit" class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-95 font-label flex items-center gap-2 ml-auto">
+              Next: Personalize Schedule
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
         </form>
+
         {% else %}
-        <div class="text-center py-5">
-            <i class="fa-regular fa-folder-open fa-4x text-muted mb-3"></i>
-            <h3 class="text-muted">No courses found.</h3>
-            <p>Try searching for a broader topic or selecting "All Levels".</p>
+        <!-- No Results State -->
+        <div class="text-center py-24">
+          <span class="material-symbols-outlined text-6xl text-outline mb-4 block">folder_open</span>
+          <h3 class="text-2xl font-bold text-on-surface mb-2">No courses found</h3>
+          <p class="text-on-surface-variant">Try a broader topic or select "All Levels".</p>
         </div>
         {% endif %}
 
-        {% else %}
-        <div class="text-center py-5 opacity-50">
-            <i class="fa-solid fa-arrow-up fa-3x mb-3 text-primary"></i>
-            <h4>Enter a topic above to start</h4>
-        </div>
-        {% endif %}
+      {% else %}
+      <!-- Empty State -->
+      <div class="text-center py-24 opacity-60">
+        <span class="material-symbols-outlined text-6xl text-primary mb-4 block">arrow_upward</span>
+        <h4 class="text-xl font-bold text-on-surface">Enter a topic above to start</h4>
+        <p class="text-on-surface-variant mt-2 text-sm">
+          Our SBERT model finds semantically similar courses — not just keyword matches.
+        </p>
+      </div>
+      {% endif %}
+
     </div>
+  </div>
+</main>
 
-    <script>
-        function showLoading() {
-            const query = document.querySelector('input[name="search_query"]').value;
-            if (query.trim() !== "") {
-                document.getElementById('loading-overlay').style.display = 'flex';
-            }
-        }
-    </script>
+<script>
+  function showLoading() {
+    const query = document.querySelector('input[name="search_query"]').value;
+    if (query.trim() !== "") {
+      const overlay = document.getElementById('loading-overlay');
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+  }
+</script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ARIA Robot Companion -->
+<div id="aria-stage-wrapper">
+  <div id="aria-stage"></div>
+</div>
+<script src="{{ url_for('static', filename='aria-robot.js') }}"></script>
+
+<script>
+/* Scroll observer: fade-slide-up for cards */
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry, i) {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i * 80) + 'ms';
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll(
+    '.card, .lesson-item, .question-block, article, .ghost-border'
+  ).forEach(function(el) {
+    el.classList.add('scroll-animate');
+    obs.observe(el);
+  });
+})();
+
+/* Button scale micro-interaction */
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button, [type="submit"]');
+  if (!btn) return;
+  btn.style.transition = 'transform 150ms ease';
+  btn.style.transform = 'scale(0.96)';
+  setTimeout(function() { btn.style.transform = ''; }, 150);
+});
+
+/* ARIA idle detection (30s) */
+(function() {
+  var t;
+  function reset() { clearTimeout(t); t = setTimeout(function() { if (window.ARIA) ARIA.idle(); }, 30000); }
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(function(ev) {
+    document.addEventListener(ev, reset, { passive: true });
+  });
+  reset();
+})();
+
+/* ═══ ARIA Interactivity Layer ═══ */
+(function() {
+  var lastSpeak = 0, MIN_GAP = 5000;
+  function say(msg) {
+    var now = Date.now();
+    if (now - lastSpeak < MIN_GAP || !window.ARIA) return;
+    lastSpeak = now;
+    ARIA.say(msg);
+  }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  var typingTimers = new WeakMap(), typingCount = 0;
+  document.addEventListener('input', function(e) {
+    var el = e.target;
+    if (!el || !el.matches('input[type="text"], input[type="search"], input[type="email"], textarea')) return;
+    clearTimeout(typingTimers.get(el));
+    typingCount++;
+    if (typingCount % 5 === 0) say(pick(['Good, I\'m listening...', 'Keep going!', 'Type away!', 'Interesting...']));
+    typingTimers.set(el, setTimeout(function() {
+      if (el.value.length > 3) say(pick(['Take your time.', 'Thinking?', 'I\'ll wait.']));
+    }, 1500));
+  }, { passive: true });
+
+  document.addEventListener('focusin', function(e) {
+    var el = e.target;
+    if (!el) return;
+    if (el.matches('input[type="search"]') || (el.matches('input[type="text"]') && (el.name === 'search_query' || el.name === 'q'))) {
+      say(pick(['Looking for something?', 'What\'s on your mind?', 'Search away!']));
+    } else if (el.matches('textarea')) {
+      say(pick(['Type as much as you like.', 'I\'m reading along.']));
+    }
+  });
+
+  document.addEventListener('change', function(e) {
+    var el = e.target;
+    if (!el) return;
+    if (el.matches('input[type="checkbox"]')) { if (el.checked && window.ARIA) ARIA.correct(); }
+    else if (el.matches('input[type="radio"]')) say(pick(['Nice pick!', 'Good choice.', 'Got it.']));
+    else if (el.matches('select')) say(pick(['Filtered!', 'Updated.', 'Noted.']));
+  });
+
+  document.addEventListener('submit', function() {
+    if (window.ARIA) ARIA.say(pick(['On it!', 'Processing...', 'Crunching data...']));
+  });
+
+  document.addEventListener('copy', function() { say(pick(['Copied!', 'Got it in your clipboard.'])); });
+
+  document.addEventListener('mouseover', function(e) {
+    var btn = e.target.closest('button[type="submit"], a.btn-primary, a[class*="from-primary"], a[class*="from-accent"]');
+    if (!btn || btn.dataset.ariaHovered) return;
+    btn.dataset.ariaHovered = '1';
+    setTimeout(function() { delete btn.dataset.ariaHovered; }, 8000);
+    say(pick(['Go for it!', 'Do it!', 'Click click!']));
+  });
+
+  var scrolledBottom = false;
+  window.addEventListener('scroll', function() {
+    var bottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 60);
+    if (bottom && !scrolledBottom) {
+      scrolledBottom = true;
+      say(pick(['You made it to the bottom!', 'All caught up?']));
+      setTimeout(function() { scrolledBottom = false; }, 15000);
+    }
+  }, { passive: true });
+})();
+
+/* ARIA event wiring */
+document.addEventListener('DOMContentLoaded', function() {
+  if (!window.ARIA) return;
+  {% if recommendations %}
+  setTimeout(function() { ARIA.say("Found {{ recommendations|length }} courses for you!"); }, 800);
+  {% else %}
+  setTimeout(function() { ARIA.say("What do you want to learn today?"); }, 1200);
+  {% endif %}
+
+  var personForm = document.querySelector('form[action="/personalize"]');
+  if (personForm) {
+    personForm.addEventListener('submit', function() {
+      if (window.ARIA) { ARIA.levelUp(); ARIA.say("Building your personalized plan!"); }
+    });
+  }
+  var searchForm = document.querySelector('form[action="/"]');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function() {
+      if (window.ARIA) ARIA.hint();
+    });
+  }
+});
+</script>
 </body>
-
 </html>

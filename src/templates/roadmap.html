@@ -1,126 +1,497 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Personalized Roadmap</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
-    </script>
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            padding-bottom: 50px;
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your AI Strategy — LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#0058bc', primaryTextColor: '#ffffff', primaryBorderColor: '#004493', lineColor: '#717786', secondaryColor: '#f3f4f5', tertiaryColor: '#ffffff', background: '#f8f9fa', mainBkg: '#ffffff', nodeBorder: '#c1c6d7', clusterBkg: '#f3f4f5', titleColor: '#191c1d', edgeLabelBackground: '#ffffff', fontFamily: 'Inter' } });
+</script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#0058bc",
+          "primary-container": "#0070eb",
+          "on-primary": "#ffffff",
+          "on-primary-container": "#fefcff",
+          "primary-fixed": "#d8e2ff",
+          "primary-fixed-dim": "#adc6ff",
+          "secondary": "#006e2c",
+          "secondary-container": "#86f898",
+          "on-secondary-container": "#00722f",
+          "on-secondary": "#ffffff",
+          "tertiary": "#b51b15",
+          "tertiary-container": "#d9372b",
+          "on-tertiary-container": "#fffbff",
+          "surface": "#f8f9fa",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f3f4f5",
+          "surface-container": "#edeeef",
+          "surface-container-high": "#e7e8e9",
+          "surface-container-highest": "#e1e3e4",
+          "on-surface": "#191c1d",
+          "on-surface-variant": "#414755",
+          "outline": "#717786",
+          "outline-variant": "#c1c6d7",
+          "background": "#f8f9fa",
+          "error": "#ba1a1a",
+          "on-error": "#ffffff",
+          "error-container": "#ffdad6",
+          "inverse-surface": "#2e3132",
+          "surface-variant": "#e1e3e4"
+        },
+        borderRadius: {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        fontFamily: {
+          "headline": ["Inter", "sans-serif"],
+          "body": ["Inter", "sans-serif"],
+          "label": ["Inter", "sans-serif"]
         }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .ghost-border { box-shadow: inset 0 0 0 1px rgba(193, 198, 215, 0.2); }
+  .pulse-border {
+    border: 1px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #0058bc, #006e2c) border-box;
+  }
+  .task-done label { text-decoration: line-through; opacity: 0.55; }
+  .mermaid { display: flex; justify-content: center; width: 100%; overflow-x: auto; }
+  .mermaid svg { max-width: 100%; height: auto; }
 
-        .header-section {
-            background: white;
-            padding: 2rem 0;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-        }
+  /* Scroll animations */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .scroll-animate.visible { opacity: 1; transform: none; }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes correctPulse {
+    0%, 100% { box-shadow: 0 0 0 0px rgba(29,158,117,0); }
+    50%       { box-shadow: 0 0 0 6px rgba(29,158,117,0.4); }
+  }
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-8px); }
+    40%     { transform: translateX(8px); }
+    60%     { transform: translateX(-5px); }
+    80%     { transform: translateX(5px); }
+  }
 
-        .card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-        }
-
-        .card-header {
-            background: white;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 1.5rem;
-            border-radius: 1rem 1rem 0 0 !important;
-        }
-
-        .task-checkbox:checked+label {
-            text-decoration: line-through;
-            color: #aaa;
-        }
-
-        .mermaid {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-    </style>
+  /* ARIA Robot */
+  #aria-stage-wrapper {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 170px;
+    z-index: 999;
+    pointer-events: none;
+  }
+  #aria-stage-wrapper #aria-stage,
+  #aria-stage-wrapper #aria-robot { pointer-events: auto; }
+  #aria-hud, #aria-streak { display: none !important; }
+  #aria-bubble {
+    box-shadow: 0 8px 32px rgba(25, 28, 29, 0.12);
+    border: 1px solid rgba(193, 198, 215, 0.25);
+  }
+  @media (max-width: 768px) {
+    #aria-stage-wrapper { width: 130px; }
+    #aria-stage { height: 180px !important; }
+  }
+</style>
 </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body">
 
-<body>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-surface-container-low z-40 border-r border-outline-variant/20">
+  <div class="flex items-center gap-3 px-6 py-8">
+    <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1">school</span>
+    <div>
+      <h1 class="text-lg font-black tracking-tighter text-on-surface">LearnPath AI</h1>
+      <p class="text-xs text-on-surface-variant font-medium">Intelligent Navigator</p>
+    </div>
+  </div>
+  <div class="flex flex-col gap-1 px-4 flex-grow">
+    <a href="/" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">auto_awesome</span>
+      Search
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">dashboard</span>
+      Overview
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-lowest rounded-lg shadow-sm font-bold border-l-4 border-primary text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">school</span>
+      Learning
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">auto_stories</span>
+      Catalog
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">group</span>
+      Friends
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all rounded-lg text-sm tracking-wide uppercase">
+      <span class="material-symbols-outlined">analytics</span>
+      Analytics
+    </a>
+  </div>
+  <div class="p-4">
+    <a href="/" class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg font-semibold tracking-wide shadow-md hover:opacity-90 transition-opacity text-sm flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined text-sm">add</span>
+      Start New Course
+    </a>
+  </div>
+</nav>
 
-    <div class="header-section text-center">
-        <div class="container">
-            <h1 class="fw-bold"><i class="fa-solid fa-map-location-dot text-primary"></i> Your AI Strategy</h1>
-            <p class="text-muted">A personalized plan powered by Llama 3</p>
-            <a href="/" class="btn btn-outline-secondary btn-sm rounded-pill px-4">Start Over</a>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 min-h-screen bg-surface flex flex-col">
+
+  <!-- Mobile Header -->
+  <header class="md:hidden flex justify-between items-center h-16 px-6 w-full bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)] border-b border-outline-variant/20">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1">school</span>
+      <h1 class="text-xl font-bold tracking-tight text-on-surface">LearnPath AI</h1>
+    </div>
+    <button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-full">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </header>
+
+  <!-- Page Content Grid -->
+  <div class="flex-1 p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
+
+    <!-- Left Column: Diagram + Study Plan -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- Page Header -->
+      <div class="mb-2">
+        <div class="flex items-center gap-3 mb-4">
+          <a href="/" class="flex items-center gap-1 text-on-surface-variant hover:text-primary text-sm font-label transition-colors">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Start Over
+          </a>
         </div>
+        <h2 class="text-4xl font-headline font-bold tracking-tight text-on-surface mb-2">Your AI Strategy</h2>
+        <p class="text-on-surface-variant max-w-2xl">
+          A personalized roadmap powered by <strong class="text-on-surface">Llama 3</strong> — built around your schedule and goals.
+        </p>
+      </div>
+
+      <!-- Learning Path Visualization Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 md:p-8 ghost-border shadow-[0_4px_32px_rgba(25,28,29,0.03)]">
+        <h3 class="text-xl font-semibold tracking-tight text-on-surface mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">account_tree</span>
+          Learning Path Visualization
+        </h3>
+        <div class="mermaid overflow-x-auto bg-surface-container-low rounded-xl p-4">
+          {{ ai_data.mermaid_syntax | safe }}
+        </div>
+      </div>
+
+      <!-- Weekly Action Plan Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 md:p-8 ghost-border shadow-[0_4px_32px_rgba(25,28,29,0.03)] relative overflow-hidden">
+        <!-- Subtle pulse border overlay -->
+        <div class="absolute inset-0 rounded-xl pointer-events-none" style="border: 1px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, rgba(0,88,188,0.15), rgba(0,110,44,0.15)) border-box;"></div>
+
+        <h3 class="text-xl font-semibold tracking-tight text-on-surface mb-6 flex items-center gap-2 relative">
+          <span class="material-symbols-outlined text-secondary">checklist</span>
+          Weekly Action Plan
+        </h3>
+
+        {% if ai_data.study_schedule %}
+        <div class="flex flex-col gap-4 relative">
+          {% for week in ai_data.study_schedule %}
+          <div class="rounded-xl bg-surface-container-low overflow-hidden">
+            <!-- Week Header -->
+            <div class="flex items-center gap-4 p-4 pb-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                {{ week.week }}
+              </div>
+              <div>
+                <h5 class="font-bold text-on-surface leading-tight">{{ week.topic }}</h5>
+                <p class="text-xs text-on-surface-variant font-label uppercase tracking-wider mt-0.5">Week {{ week.week }}</p>
+              </div>
+            </div>
+            <!-- Tasks -->
+            <div class="flex flex-col px-4 pb-4 gap-1">
+              {% for task in week.tasks %}
+              <div class="task-item flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group" onclick="toggleTask(this)">
+                <div class="pt-0.5 shrink-0">
+                  <div class="task-check w-5 h-5 rounded border-2 border-outline-variant bg-surface-container-lowest flex items-center justify-center transition-all">
+                    <span class="material-symbols-outlined text-on-primary text-sm hidden">check</span>
+                  </div>
+                </div>
+                <label class="text-sm text-on-surface cursor-pointer leading-relaxed flex-1 select-none">{{ task }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 relative">
+          <span class="material-symbols-outlined text-4xl text-error mb-3 block">warning</span>
+          <h4 class="font-bold text-on-surface mb-1">Schedule generation failed</h4>
+          <p class="text-on-surface-variant text-sm mb-6">Please try again with a different description.</p>
+          <a href="/" class="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-lg font-bold text-sm font-label shadow-md hover:shadow-lg transition-all active:scale-95">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            Try Again
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
     </div>
 
-    <div class="container">
+    <!-- Right Column: Calendar Sidebar -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      <div class="bg-surface-container-lowest rounded-xl p-6 ghost-border shadow-[0_4px_32px_rgba(25,28,29,0.03)] sticky top-8">
 
-        <div class="card">
-            <div class="card-header">
-                <h4 class="fw-bold m-0 text-primary"><i class="fa-solid fa-diagram-project me-2"></i>Learning Path
-                    Visualization</h4>
+        <h3 class="text-lg font-semibold tracking-tight text-on-surface mb-6 flex justify-between items-center">
+          Schedule
+          <span class="text-sm font-normal text-on-surface-variant font-label">Your Plan</span>
+        </h3>
+
+        <!-- Progress Ring -->
+        <div class="flex items-center gap-4 mb-8 p-4 bg-surface-container rounded-xl">
+          <div class="relative w-16 h-16 shrink-0">
+            <svg class="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#edeeef" stroke-width="6"/>
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#006e2c" stroke-width="6"
+                stroke-dasharray="163.4" stroke-dashoffset="122.5" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-sm font-black text-on-surface">25%</span>
             </div>
-            <div class="card-body p-4 bg-white overflow-auto">
-                <div class="mermaid">
-                    {{ ai_data.mermaid_syntax | safe }}
-                </div>
-            </div>
+          </div>
+          <div>
+            <p class="font-bold text-on-surface text-sm">In Progress</p>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Keep up the momentum — you're on track.</p>
+          </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h4 class="fw-bold m-0 text-success"><i class="fa-solid fa-list-check me-2"></i>Weekly Action Plan</h4>
-            </div>
-            <div class="card-body p-0">
-                {% if ai_data.study_schedule %}
-                {% for week in ai_data.study_schedule %}
-                <div class="p-4 border-bottom">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                            style="width: 40px; height: 40px; font-weight: bold;">
-                            {{ week.week }}
-                        </div>
-                        <h5 class="fw-bold m-0">{{ week.topic }}</h5>
-                    </div>
-
-                    <ul class="list-group list-group-flush">
-                        {% for task in week.tasks %}
-                        <li class="list-group-item border-0 px-0 py-2 d-flex gap-3">
-                            <input class="form-check-input task-checkbox flex-shrink-0" type="checkbox"
-                                id="week{{week.week}}-task{{loop.index}}">
-                            <label class="form-check-label" for="week{{week.week}}-task{{loop.index}}">
-                                {{ task }}
-                            </label>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endfor %}
-                {% else %}
-                <div class="p-5 text-center text-danger">
-                    <i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i>
-                    <h4>Oops! The AI Schedule generation failed.</h4>
-                    <p>Please try again with a different description.</p>
-                </div>
-                {% endif %}
-            </div>
+        <!-- Calendar Legend -->
+        <div class="flex gap-4 mb-4 text-xs font-label uppercase tracking-wider text-on-surface-variant">
+          <div class="flex items-center gap-1.5">
+            <div class="w-2 h-2 rounded-full bg-secondary"></div> Done
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-2 h-2 rounded-full bg-primary"></div> Today
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-2 h-2 rounded-full bg-surface-container-highest"></div> Planned
+          </div>
         </div>
 
+        <!-- Minimalist Calendar Grid -->
+        <div class="grid grid-cols-7 gap-1 text-center mb-2 text-xs font-label text-on-surface-variant">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-sm font-medium text-on-surface mb-6">
+          <div class="p-2 rounded text-on-surface-variant opacity-40 text-center text-xs">29</div>
+          <div class="p-2 rounded text-on-surface-variant opacity-40 text-center text-xs">30</div>
+          <div class="p-2 rounded text-on-surface-variant opacity-40 text-center text-xs">31</div>
+          <div class="p-2 rounded bg-secondary-container/20 text-secondary text-center text-xs font-bold cursor-pointer">1</div>
+          <div class="p-2 rounded bg-secondary-container/20 text-secondary text-center text-xs font-bold cursor-pointer">2</div>
+          <div class="p-2 rounded bg-secondary-container/20 text-secondary text-center text-xs font-bold cursor-pointer">3</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">4</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">5</div>
+          <div class="p-2 rounded bg-secondary-container/20 text-secondary text-center text-xs font-bold cursor-pointer">6</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">7</div>
+          <div class="p-2 rounded bg-secondary-container/20 text-secondary text-center text-xs font-bold cursor-pointer">8</div>
+          <div class="p-2 rounded bg-primary text-on-primary shadow-sm text-center text-xs font-bold cursor-pointer">9</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs relative">
+            10
+            <span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
+          </div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">11</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">12</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs relative">
+            13
+            <span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
+          </div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">14</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs relative">
+            15
+            <span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
+          </div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">16</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">17</div>
+          <div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-center text-xs">18</div>
+        </div>
+
+        <!-- Up Next Session -->
+        <div class="border-t border-outline-variant/20 pt-6">
+          <h4 class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-4">Up Next</h4>
+          {% if ai_data.study_schedule %}
+          <div class="flex flex-col gap-3">
+            {% set first_week = ai_data.study_schedule[0] %}
+            <div class="bg-surface-container p-4 rounded-xl flex items-center justify-between ghost-border">
+              <div>
+                <p class="font-semibold text-sm text-on-surface">{{ first_week.topic }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">Week {{ first_week.week }} · Starting now</p>
+              </div>
+              <button class="text-primary hover:bg-surface-container-high p-2 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-xl">play_circle</span>
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-2 mt-6 pt-6 border-t border-outline-variant/20">
+          <a href="/" class="w-full py-3 px-4 text-primary font-label text-sm font-bold hover:bg-surface-container transition-colors rounded-lg text-center flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            Start New Search
+          </a>
+        </div>
+
+      </div>
     </div>
 
+  </div>
+</main>
+
+<script>
+  function toggleTask(item) {
+    const check = item.querySelector('.task-check');
+    const checkIcon = check.querySelector('span');
+    const label = item.querySelector('label');
+    const isChecked = check.classList.contains('bg-primary');
+
+    if (isChecked) {
+      check.classList.remove('bg-primary', 'border-primary');
+      check.classList.add('bg-surface-container-lowest', 'border-outline-variant');
+      checkIcon.classList.add('hidden');
+      label.classList.remove('line-through', 'opacity-60');
+    } else {
+      check.classList.add('bg-primary', 'border-primary');
+      check.classList.remove('bg-surface-container-lowest', 'border-outline-variant');
+      checkIcon.classList.remove('hidden');
+      label.classList.add('line-through', 'opacity-60');
+      if (window.ARIA) ARIA.correct();
+    }
+  }
+</script>
+
+<!-- ARIA Robot Companion -->
+<div id="aria-stage-wrapper">
+  <div id="aria-stage"></div>
+</div>
+<script src="{{ url_for('static', filename='aria-robot.js') }}"></script>
+
+<script>
+/* Scroll observer */
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry, i) {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i * 80) + 'ms';
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.ghost-border, .task-item').forEach(function(el) {
+    el.classList.add('scroll-animate');
+    obs.observe(el);
+  });
+})();
+
+/* Button scale micro-interaction */
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button, [type="submit"]');
+  if (!btn) return;
+  btn.style.transition = 'transform 150ms ease';
+  btn.style.transform = 'scale(0.96)';
+  setTimeout(function() { btn.style.transform = ''; }, 150);
+});
+
+/* ARIA idle detection */
+(function() {
+  var t;
+  function reset() { clearTimeout(t); t = setTimeout(function() { if (window.ARIA) ARIA.idle(); }, 30000); }
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(function(ev) {
+    document.addEventListener(ev, reset, { passive: true });
+  });
+  reset();
+})();
+
+/* ═══ ARIA Interactivity Layer ═══ */
+(function() {
+  var lastSpeak = 0, MIN_GAP = 5000;
+  function say(msg) {
+    var now = Date.now();
+    if (now - lastSpeak < MIN_GAP || !window.ARIA) return;
+    lastSpeak = now;
+    ARIA.say(msg);
+  }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  /* Task-item click reaction: ARIA cheers when a task is completed */
+  document.querySelectorAll('.task-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      setTimeout(function() {
+        var check = item.querySelector('.task-check');
+        if (check && check.classList.contains('bg-primary')) {
+          if (window.ARIA) ARIA.correct();
+          say(pick(['Nice work!', 'Task done!', 'Keep it up!', 'One step closer!']));
+        }
+      }, 50);
+    });
+  });
+
+  document.addEventListener('mouseover', function(e) {
+    var btn = e.target.closest('button[type="submit"], a[class*="from-primary"], a[class*="from-accent"]');
+    if (!btn || btn.dataset.ariaHovered) return;
+    btn.dataset.ariaHovered = '1';
+    setTimeout(function() { delete btn.dataset.ariaHovered; }, 8000);
+    say(pick(['Go for it!', 'Do it!', 'Click click!']));
+  });
+
+  document.addEventListener('copy', function() { say(pick(['Copied!', 'Got it.'])); });
+
+  var scrolledBottom = false;
+  window.addEventListener('scroll', function() {
+    var bottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 60);
+    if (bottom && !scrolledBottom) {
+      scrolledBottom = true;
+      say(pick(['You reached the end of the roadmap!', 'All caught up?']));
+      setTimeout(function() { scrolledBottom = false; }, 15000);
+    }
+  }, { passive: true });
+})();
+
+/* ARIA page-load celebration */
+document.addEventListener('DOMContentLoaded', function() {
+  if (!window.ARIA) return;
+  setTimeout(function() {
+    ARIA.levelUp();
+    ARIA.say("Your AI roadmap is ready! Let's start learning!");
+  }, 1500);
+});
+</script>
 </body>
-
 </html>

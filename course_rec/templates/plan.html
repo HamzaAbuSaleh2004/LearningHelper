@@ -77,7 +77,7 @@
                 <div class="grid grid-cols-7 gap-1">
                     {% for day in week %}
                     <div class="w-full aspect-square rounded-md flex items-center justify-center text-[10px] font-medium transition-all
-                        {% if day.is_today %}ring-2 ring-primary-400 ring-offset-1 ring-offset-[#0f0f1a]{% endif %}
+                        {% if day.is_today %}ring-2 ring-primary-400 ring-offset-1 ring-offset-white{% endif %}
                         {% if day.is_checked %}bg-accent-500/30 text-accent-300
                         {% elif day.is_plan and not day.is_past %}bg-primary-500/20 text-primary-300
                         {% elif day.is_plan and day.is_past %}bg-red-500/10 text-red-400
@@ -151,6 +151,7 @@ function toggleItem(enrollmentId, itemId) {
             btn.classList.remove('border-white/20', 'text-transparent');
             row.classList.add('opacity-60');
             row.querySelectorAll('h4, p').forEach(el => el.classList.add('line-through'));
+            if (window.ARIA) ARIA.correct();
         } else {
             btn.classList.remove('bg-accent-500', 'border-accent-500', 'text-white');
             btn.classList.add('border-white/20', 'text-transparent');
@@ -162,9 +163,21 @@ function toggleItem(enrollmentId, itemId) {
 
         // If all done, reload to show the post-test CTA
         if (data.all_done) {
+            if (window.ARIA) { ARIA.levelUp(); ARIA.say("All lessons done! Time for your final test!"); }
             setTimeout(() => location.reload(), 500);
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!window.ARIA) return;
+  {% if all_done %}
+  setTimeout(function() { ARIA.levelUp(); ARIA.say("All lessons complete! Take your final assessment!"); }, 1000);
+  {% elif enrollment.completed %}
+  setTimeout(function() { ARIA.say("Course completed! You've grown so much!"); }, 1000);
+  {% else %}
+  setTimeout(function() { ARIA.say("Ready to study? Check off each lesson as you complete it!"); }, 2000);
+  {% endif %}
+});
 </script>
 {% endblock %}

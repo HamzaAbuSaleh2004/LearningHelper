@@ -8,7 +8,7 @@
         <div class="relative w-32 h-32 mx-auto mb-6">
             <!-- Circular progress ring -->
             <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(193,198,215,0.3)" stroke-width="8"/>
                 <circle cx="60" cy="60" r="54" fill="none"
                         stroke="url(#scoreGrad)" stroke-width="8"
                         stroke-linecap="round"
@@ -18,8 +18,8 @@
                         id="score-ring"/>
                 <defs>
                     <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#6366f1"/>
-                        <stop offset="100%" stop-color="#10b981"/>
+                        <stop offset="0%" stop-color="#0058bc"/>
+                        <stop offset="100%" stop-color="#006e2c"/>
                     </linearGradient>
                 </defs>
             </svg>
@@ -74,4 +74,19 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (!window.ARIA) return;
+  {% if score >= 60 %}
+  ARIA.correct();
+  setTimeout(function() { ARIA.say("You scored {{ score }}%! Excellent work!"); }, 3500);
+  {% else %}
+  ARIA.wrong();
+  setTimeout(function() { ARIA.say("{{ score }}% this time — keep practicing!"); }, 3500);
+  {% endif %}
+});
+</script>
 {% endblock %}

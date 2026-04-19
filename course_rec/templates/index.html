@@ -354,7 +354,7 @@
                 const labels = data.labels, values = data.values, n = labels.length;
                 const angleStep = (2 * Math.PI) / n;
 
-                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                ctx.strokeStyle = 'rgba(193,198,215,0.3)';
                 ctx.lineWidth = 1;
                 for (let level = 0.25; level <= 1; level += 0.25) {
                     ctx.beginPath();
@@ -374,10 +374,10 @@
                 }
 
                 const gradient = ctx.createLinearGradient(0, 0, w, h);
-                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
-                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.3)');
+                gradient.addColorStop(0, 'rgba(0, 88, 188, 0.15)');
+                gradient.addColorStop(1, 'rgba(0, 110, 44, 0.15)');
                 ctx.fillStyle = gradient;
-                ctx.strokeStyle = 'rgba(99, 102, 241, 0.8)';
+                ctx.strokeStyle = 'rgba(0, 88, 188, 0.8)';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 for (let i = 0; i < n; i++) {
@@ -389,7 +389,7 @@
                 }
                 ctx.closePath(); ctx.fill(); ctx.stroke();
 
-                ctx.fillStyle = '#e2e8f0';
+                ctx.fillStyle = '#191c1d';
                 ctx.font = '10px Inter, Tajawal, sans-serif';
                 ctx.textAlign = 'center';
                 for (let i = 0; i < n; i++) {
@@ -398,12 +398,12 @@
                     const px = cx + Math.cos(angle) * r * val;
                     const py = cy + Math.sin(angle) * r * val;
                     ctx.beginPath(); ctx.arc(px, py, 4, 0, 2 * Math.PI);
-                    ctx.fillStyle = '#6366f1'; ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+                    ctx.fillStyle = '#0058bc'; ctx.fill();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
 
                     const lx = cx + Math.cos(angle) * (r + 18);
                     const ly = cy + Math.sin(angle) * (r + 18);
-                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillStyle = '#717786';
                     ctx.fillText(labels[i], lx, ly + 3);
                 }
             }).catch(() => {});

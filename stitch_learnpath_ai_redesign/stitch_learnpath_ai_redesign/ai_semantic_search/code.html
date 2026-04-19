@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Semantic Search - LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6ddd81",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "outline": "#717786",
+                        "tertiary": "#b51b15",
+                        "on-tertiary-fixed": "#410001",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00722f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#0058bc",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#0070eb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#d9372b",
+                        "surface-dim": "#d9dadb",
+                        "surface-container": "#edeeef",
+                        "secondary-container": "#86f898",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#930004",
+                        "surface-tint": "#005bc1",
+                        "outline-variant": "#c1c6d7",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#001a41",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed": "#002108",
+                        "secondary": "#006e2c",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#89fa9b",
+                        "surface-container-low": "#f3f4f5",
+                        "on-surface-variant": "#414755",
+                        "on-primary-container": "#fefcff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#005320",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .ghost-border { border: 1px solid rgba(193, 198, 215, 0.2); }
+        .pulse-border { border: 1px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #0058bc, #006e2c) border-box; }
+        .ambient-shadow { box-shadow: 0 32px 64px rgba(25, 28, 29, 0.04); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-slate-50 dark:bg-slate-900 border-r border-slate-200/20 dark:border-slate-800/20 p-4 gap-2 z-40">
+<div class="mb-8 px-4 mt-4">
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white font-headline">LearnPath AI</h1>
+<p class="text-xs text-on-surface-variant mt-1">Intelligent Navigator</p>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-label text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            Overview
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-label text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+            Learning
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-950 rounded-lg shadow-sm font-bold border-l-4 border-blue-600 font-label text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+            Catalog
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-label text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+            Friends
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-label text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+            Analytics
+        </a>
+<div class="mt-auto pt-4">
+<button class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg font-label text-sm font-bold shadow-md hover:opacity-90 transition-opacity">
+                Start New Course
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar (Mobile & Desktop Header) -->
+<header class="flex justify-between items-center h-16 px-6 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)] border-b border-slate-200/20 dark:border-slate-800/20 font-['Inter'] antialiased tracking-tight">
+<div class="md:hidden">
+<h1 class="text-xl font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-50">LearnPath AI</h1>
+</div>
+<div class="hidden md:flex flex-1">
+<!-- Empty space on desktop since logo is in sidebar -->
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden ghost-border">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="close up portrait of a young professional woman with natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmjibO2hReENMf9QSqLlCZ07hMvoAA4k8X_U2Vm8Yo9EX3n_NWRxKJHi1V31afEHukrw7hGWGRFlvG4y4GLb5yb3ZvfkqYgCl4w1BoKIshiEFESngSXkyugFZF9i141U_I5bWpejuVAGzwO7O7T7WpOI6ktE7DiovZWtqC3oNnsPRqV0lQPKpOQ-6F3WjvBfI5kvzJhFmQts6Y_SmloVT5mlvGHS9kO8GBFsE_UjhlXn9CTHHNqTcx5vFPd8QrCotkek91JmUkMI0"/>
+</div>
+</div>
+</header>
+<!-- Search Canvas -->
+<div class="flex-1 p-6 lg:p-12 bg-surface">
+<div class="max-w-5xl mx-auto">
+<!-- Header & AI Status -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="max-w-2xl">
+<h2 class="text-4xl md:text-5xl font-extrabold tracking-[-0.02em] text-on-surface font-headline mb-4 leading-tight">
+                            Semantic Intelligence
+                        </h2>
+<p class="text-lg text-on-surface-variant font-body">
+                            Search concepts, skills, or questions. Our AI understands context, not just keywords.
+                        </p>
+</div>
+<div class="flex items-center gap-2 bg-secondary-container/20 px-4 py-2 rounded-full border border-secondary-container">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-xs font-bold text-on-secondary-container uppercase tracking-wider font-label">SBERT Semantic Search Active</span>
+</div>
+</div>
+<!-- Massive Search Input -->
+<div class="relative w-full mb-16">
+<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<input class="w-full bg-surface-container-lowest text-on-surface text-xl md:text-2xl py-6 pl-20 pr-32 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary shadow-[0_8px_30px_rgb(0,0,0,0.04)] pulse-border font-body placeholder:text-outline/50 transition-all duration-300" placeholder="e.g. 'How do neural networks process language?'" type="text" value="Advanced prompt engineering techniques"/>
+<div class="absolute inset-y-0 right-4 flex items-center">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-95 font-label">
+                            Search
+                        </button>
+</div>
+</div>
+<!-- Results Grid (Bento Style) -->
+<div class="mb-8">
+<h3 class="text-sm font-bold text-on-surface uppercase tracking-widest font-label mb-6">Top Semantic Matches</h3>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Top Match (Large Hero Card) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl ghost-border overflow-hidden flex flex-col md:flex-row hover:shadow-[0_20px_40px_rgba(25,28,29,0.06)] transition-shadow duration-300 relative">
+<div class="absolute top-4 left-4 z-10 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-md border border-primary/20 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="target">target</span>
+<span class="text-primary font-bold text-sm font-label">98% Match</span>
+</div>
+<div class="md:w-2/5 h-48 md:h-auto bg-surface-container relative">
+<img alt="Course thumbnail" class="w-full h-full object-cover" data-alt="abstract digital art showing glowing geometric shapes and light trails representing artificial intelligence and data flow in deep blue and green hues" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4JtDM6jj9cX-z9Dt_0n1uJhTvUyB2k7I-VYV5hCFmYQiUP_a5zw_B8mbzsXYyf5TUnzH7C9VpOBT0zZRLSDKuOCfatL6gD1mDwyjSbvpmKM84-MRHCU42s3XKw6W6CYfSlQUx0AxCaihH-LL9j2Zaa6wN7L5F2rG3flJR78zSFGeKeA0T8BOx7mZGusZoS_1aWSfLYBd9gc1R3KUggyXGZQaphwIxfoK68bwg2eGNcvfn4Lr57AAcbjMUKG0RxFEBvXl-1JinnNI"/>
+</div>
+<div class="p-8 md:w-3/5 flex flex-col justify-center">
+<div class="flex gap-2 mb-4">
+<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold uppercase tracking-wide font-label">Masterclass</span>
+<span class="bg-surface-container text-on-surface-variant text-xs px-2 py-1 rounded font-bold uppercase tracking-wide font-label">NLP</span>
+</div>
+<h4 class="text-2xl font-bold font-headline tracking-tight text-on-surface mb-3">Architecting LLM Prompts</h4>
+<p class="text-on-surface-variant font-body mb-6 text-sm leading-relaxed">
+                                    Deep dive into token optimization, zero-shot framing, and chain-of-thought elicitation for enterprise AI models. Matches your query conceptually across 4 distinct learning modules.
+                                </p>
+<div class="mt-auto">
+<button class="text-primary font-bold font-label hover:text-primary-container transition-colors flex items-center gap-2">
+                                        Explore Path <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Match -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl ghost-border p-6 hover:shadow-[0_20px_40px_rgba(25,28,29,0.06)] transition-shadow duration-300 flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-surface-container-lowest px-2 py-1 rounded-md border border-secondary/20 flex items-center gap-1">
+<span class="text-secondary font-bold text-xs font-label">87% Match</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="bookmark_border">bookmark_border</span>
+</div>
+<h4 class="text-lg font-bold font-headline tracking-tight text-on-surface mb-2">Context Windows &amp; Retrieval</h4>
+<p class="text-on-surface-variant font-body text-sm mb-6 flex-1">
+                                Understanding how RAG (Retrieval-Augmented Generation) interacts with complex prompt structures.
+                            </p>
+<div class="flex items-center gap-3 pt-4 border-t border-surface-variant">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="Instructor" class="w-full h-full object-cover" data-alt="professional headshot of a mature woman with glasses smiling slightly against a bright office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs3uTwNQBJKMNbyg27gou3Mx79d-G-_h4ChEtf72KA67MF6n6Tmv35H4YcoLSElCznO5APm564tY07cOw74QbSBaVyfoYfySL-bfVMvWxM8rKVp4bwrAlNWj7S0v8ZkAa3Jb4EQZTSmZYyRynxIcJb7wb6-cfY86sNLfOMsfULR7xLvda49pEpX9HCGDWmBeqc5MjcZ86VW2jn_ZHvxDhXjJWP0tIFpfvn8vwM-f2yCv9tO7L39baBWoytsA0F51t8equxwhcFuew"/>
+</div>
+<span class="text-xs font-bold text-on-surface font-label">Dr. Sarah Chen</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

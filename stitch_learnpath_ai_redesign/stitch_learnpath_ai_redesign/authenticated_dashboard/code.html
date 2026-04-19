@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - LearnPath AI</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#6ddd81",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-background": "#191c1d",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-fixed-dim": "#ffb4a9",
+                    "on-error-container": "#93000a",
+                    "background": "#f8f9fa",
+                    "on-secondary": "#ffffff",
+                    "outline": "#717786",
+                    "tertiary": "#b51b15",
+                    "on-tertiary-fixed": "#410001",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary-container": "#00722f",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0058bc",
+                    "tertiary-fixed": "#ffdad5",
+                    "primary-container": "#0070eb",
+                    "inverse-on-surface": "#f0f1f2",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#d9372b",
+                    "surface-dim": "#d9dadb",
+                    "surface-container": "#edeeef",
+                    "secondary-container": "#86f898",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-fixed-variant": "#930004",
+                    "surface-tint": "#005bc1",
+                    "outline-variant": "#c1c6d7",
+                    "surface-variant": "#e1e3e4",
+                    "on-primary-fixed": "#001a41",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "on-secondary-fixed": "#002108",
+                    "secondary": "#006e2c",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#89fa9b",
+                    "surface-container-low": "#f3f4f5",
+                    "on-surface-variant": "#414755",
+                    "on-primary-container": "#fefcff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .milled-gradient {
+            background: linear-gradient(135deg, #0058bc 0%, #0070eb 100%);
+        }
+        .ai-pulse-border {
+            position: relative;
+        }
+        .ai-pulse-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            background: linear-gradient(135deg, #0058bc, #006e2c);
+            z-index: -1;
+            border-radius: inherit;
+            opacity: 0.2;
+        }
+    </style>
+<!-- Chart.js for Radar Chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row font-body">
+<!-- Mobile Top Navigation Bar -->
+<div class="md:hidden bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 border-b border-slate-200/20 dark:border-slate-800/20 shadow-[0_32px_64px_rgba(0,0,0,0.04)] flex justify-between items-center h-16 px-6 w-full">
+<div class="flex items-center gap-3">
+<span class="text-xl font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-50 font-headline">LearnPath AI</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors active:scale-95 duration-200 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover outline-variant outline outline-1 outline-offset-2 opacity-20 hover:opacity-100 transition-opacity" data-alt="Portrait of a young professional woman with neutral expression, soft natural lighting, studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPpGVgu4zcDekfWcecjUiPThpAunEFVs_kVKDHgyXyBz11t_qByX31ZoRaUPt9Zxj3IpPH4vAnwAOCBCTMb-mjjfRopKyaJhYaddbXPtSJWTyGeFmGHJm5QmJaBsCkev1exf0tYEPJzxEaW0-zsq9mkXsddwG0xOdHlaIJ2KgZjRxwokAgHybh5EG1eEc_WHzF49JUde2L8EIy9V0qSz-qemIPUZhY6JtKUnwJQGEJkl3c7PBBNG1rHjMmikNmzyM5dUmqubXMEu8"/>
+</div>
+</div>
+<!-- Desktop Side Navigation Bar -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-slate-50 dark:bg-slate-900 bg-slate-100 dark:bg-slate-800/50 flat no-shadow flex flex-col gap-2 p-4 border-r border-slate-200/20 dark:border-slate-800/20 font-['Inter'] text-sm tracking-wide uppercase label-md z-40">
+<div class="mb-8 px-4 py-2 mt-4">
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white font-headline">LearnPath AI</h1>
+<p class="text-xs text-on-surface-variant lowercase tracking-normal font-body">Intelligent Navigator</p>
+</div>
+<div class="flex flex-col gap-1 flex-grow">
+<!-- Active: Overview -->
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-950 rounded-lg shadow-sm font-bold border-l-4 border-blue-600 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label tracking-[0.05em]">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all focus-within:ring-2 ring-blue-500/20 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">school</span>
+<span class="font-label tracking-[0.05em]">Learning</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all focus-within:ring-2 ring-blue-500/20 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">auto_stories</span>
+<span class="font-label tracking-[0.05em]">Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all focus-within:ring-2 ring-blue-500/20 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-label tracking-[0.05em]">Friends</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all focus-within:ring-2 ring-blue-500/20 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span class="font-label tracking-[0.05em]">Analytics</span>
+</a>
+</div>
+<div class="mt-auto px-2 pb-4">
+<button class="w-full py-3 milled-gradient text-on-primary rounded-lg font-label uppercase tracking-[0.05em] text-xs shadow-[0_4px_12px_rgba(0,88,188,0.2)] hover:shadow-[0_6px_16px_rgba(0,88,188,0.3)] transition-all border border-primary-fixed-dim/30">
+                Start New Course
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-6 lg:p-12 xl:p-16 w-full max-w-[1600px] mx-auto min-h-screen pb-24 md:pb-12">
+<!-- Welcome Banner -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<h2 class="text-[2.5rem] leading-[1.1] font-headline font-bold text-on-surface tracking-[-0.02em] mb-3">Good morning, Dr. Aris.</h2>
+<p class="text-on-surface-variant text-lg font-body leading-relaxed max-w-xl">Your cognitive model is primed. You are currently in the top 12% of scholars in Quantum Computing paradigms this week.</p>
+</div>
+<div class="hidden md:flex items-center gap-4">
+<button class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors shadow-[0_8px_24px_rgba(25,28,29,0.04)] border border-outline-variant/20 relative">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-colors shadow-[0_8px_24px_rgba(25,28,29,0.04)] border border-outline-variant/20 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-3 right-3 w-2 h-2 bg-tertiary-container rounded-full"></span>
+</button>
+<img alt="User profile" class="w-12 h-12 rounded-full object-cover border-2 border-surface-container-lowest shadow-sm" data-alt="Portrait of a young professional woman with neutral expression, soft natural lighting, studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaynCieAhXwRibUe49pE3yw3OmeQmiIVlk_IfndgMzPFtnyjuRg6Ej4D3nvvjoF0ac0ggyaGxsHxZk8yieEFo2ko2_QBRAzmqmnZo94qRlMXXsB4Eu0siNzx2GDuIU9vF9CxGfdDbLUfbVbj43wReIw7Rxg-u3OjKm_gd8TWC--LYfaB_NLDZrkz1U24bd3sIDChC5cvHtnWpnckfLLEEyLIge04X6xZYcbSTPG263V-hyZ-cMNMktE7BFxZDmXsqQg1etcR6eNPI"/>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8">
+<!-- Left Column: Active Focus & Actions -->
+<div class="md:col-span-8 flex flex-col gap-6 lg:gap-8">
+<!-- Active Course Card (AI Forward) -->
+<section class="bg-surface-container-lowest rounded-xl p-8 relative overflow-hidden ai-pulse-border shadow-[0_16px_48px_rgba(25,28,29,0.04)] group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-primary/10 transition-colors duration-700"></div>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary text-sm">neurology</span>
+<span class="text-xs font-label uppercase tracking-[0.05em] text-primary font-semibold">Active Synthesis</span>
+</div>
+<h3 class="text-2xl md:text-[2rem] leading-tight font-headline font-bold text-on-surface tracking-tight mb-4 max-w-lg">Advanced Neural Architectures &amp; Topological Data Analysis</h3>
+<p class="text-on-surface-variant font-body mb-8 max-w-xl">Module 4: "Manifold Learning Techniques" is queued. Estimated completion time: 45 minutes.</p>
+<div class="space-y-3 mb-8">
+<div class="flex justify-between items-end">
+<span class="text-sm font-label uppercase tracking-widest text-on-surface-variant">Progress</span>
+<span class="text-lg font-headline font-semibold text-on-surface">68%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden relative">
+<div class="h-full milled-gradient w-[68%] rounded-full absolute left-0 top-0"></div>
+</div>
+</div>
+<div class="flex flex-wrap gap-4 items-center">
+<button class="px-6 py-3 milled-gradient text-on-primary rounded-lg font-label uppercase tracking-[0.05em] text-sm shadow-[0_4px_12px_rgba(0,88,188,0.2)] hover:shadow-[0_6px_16px_rgba(0,88,188,0.3)] transition-all border border-primary-fixed-dim/30 flex items-center gap-2">
+<span>Resume Session</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="px-6 py-3 bg-transparent text-primary rounded-lg font-label uppercase tracking-[0.05em] text-sm hover:bg-surface-container-high transition-colors flex items-center gap-2 border border-transparent">
+<span class="material-symbols-outlined text-[18px]">library_books</span>
+<span>Review Notes</span>
+</button>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Action 1 -->
+<a class="bg-surface-container-low rounded-lg p-5 flex flex-col gap-4 hover:bg-surface-container-highest transition-colors border border-outline-variant/20 hover:shadow-[0_8px_24px_rgba(25,28,29,0.04)] group" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary border border-outline-variant/10 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">search</span>
+</div>
+<div>
+<h4 class="font-headline font-semibold text-on-surface text-sm">Deep Search</h4>
+<p class="text-xs text-on-surface-variant mt-1">Query knowledge base</p>
+</div>
+</a>
+<!-- Action 2 -->
+<a class="bg-surface-container-low rounded-lg p-5 flex flex-col gap-4 hover:bg-surface-container-highest transition-colors border border-outline-variant/20 hover:shadow-[0_8px_24px_rgba(25,28,29,0.04)] group" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-secondary border border-outline-variant/10 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<h4 class="font-headline font-semibold text-on-surface text-sm">AI Insights</h4>
+<p class="text-xs text-on-surface-variant mt-1">Curated reads</p>
+</div>
+</a>
+<!-- Action 3 -->
+<a class="bg-surface-container-low rounded-lg p-5 flex flex-col gap-4 hover:bg-surface-container-highest transition-colors border border-outline-variant/20 hover:shadow-[0_8px_24px_rgba(25,28,29,0.04)] group" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-on-surface border border-outline-variant/10 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">account_tree</span>
+</div>
+<div>
+<h4 class="font-headline font-semibold text-on-surface text-sm">Pathways</h4>
+<p class="text-xs text-on-surface-variant mt-1">Explore curriculum</p>
+</div>
+</a>
+<!-- Action 4 -->
+<a class="bg-surface-container-low rounded-lg p-5 flex flex-col gap-4 hover:bg-surface-container-highest transition-colors border border-outline-variant/20 hover:shadow-[0_8px_24px_rgba(25,28,29,0.04)] group" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-on-surface border border-outline-variant/10 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">monitoring</span>
+</div>
+<div>
+<h4 class="font-headline font-semibold text-on-surface text-sm">Metrics</h4>
+<p class="text-xs text-on-surface-variant mt-1">View analytics</p>
+</div>
+</a>
+</section>
+<!-- Recent Activity List (No Dividers) -->
+<section class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/20 shadow-[0_8px_24px_rgba(25,28,29,0.02)]">
+<h3 class="text-lg font-headline font-bold text-on-surface tracking-tight mb-6">Recent Cognitive Commits</h3>
+<div class="space-y-6">
+<!-- Item 1 -->
+<div class="flex gap-4 p-4 -mx-4 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-surface-container-lowest shrink-0">
+<span class="material-symbols-outlined">quiz</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-semibold text-on-surface text-sm">Assessment Completed: Linear Algebra</h4>
+<span class="text-xs font-label uppercase text-on-surface-variant">2h ago</span>
+</div>
+<p class="text-sm text-on-surface-variant font-body">Scored 94%. Mastery level increased in vector spaces.</p>
+<div class="mt-2 inline-flex items-center gap-1 bg-secondary-container/30 text-secondary-fixed-dim px-2 py-1 rounded text-[10px] font-label uppercase tracking-widest border border-secondary-fixed-dim/20">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+                                    Excellent
+                                </div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-4 p-4 -mx-4 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface group-hover:bg-surface-container-lowest shrink-0">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-semibold text-on-surface text-sm">Read: "Attention Is All You Need"</h4>
+<span class="text-xs font-label uppercase text-on-surface-variant">Yesterday</span>
+</div>
+<p class="text-sm text-on-surface-variant font-body">Annotated 14 sections. Generated 3 flashcards.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Analytics & Identity -->
+<div class="md:col-span-4 flex flex-col gap-6 lg:gap-8">
+<!-- Radar Chart Container -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/20 shadow-[0_8px_24px_rgba(25,28,29,0.02)] flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-base font-headline font-bold text-on-surface tracking-tight">Competency Vector</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 relative w-full h-full flex items-center justify-center">
+<canvas id="competencyRadar"></canvas>
+</div>
+</section>
+<!-- Achievement Badges -->
+<section class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+<h3 class="text-base font-headline font-bold text-on-surface tracking-tight mb-4">Acquired Taxonomy</h3>
+<div class="grid grid-cols-2 gap-3">
+<!-- Badge 1 -->
+<div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<div>
+<p class="text-xs font-headline font-bold text-on-surface leading-tight">Algorithm Architect</p>
+<p class="text-[10px] text-on-surface-variant mt-0.5">Lvl 4 Mastery</p>
+</div>
+</div>
+<!-- Badge 2 -->
+<div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div>
+<p class="text-xs font-headline font-bold text-on-surface leading-tight">Deep Thinker</p>
+<p class="text-[10px] text-on-surface-variant mt-0.5">100h Focus</p>
+</div>
+</div>
+<!-- Badge 3 -->
+<div class="bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 flex items-center gap-3 opacity-50 grayscale">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<div>
+<p class="text-xs font-headline font-bold text-on-surface leading-tight">Network Pro</p>
+<p class="text-[10px] text-on-surface-variant mt-0.5">In Progress (80%)</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-2 text-primary font-label text-xs uppercase tracking-widest hover:bg-surface-container-highest rounded transition-colors text-center">
+                        View All Badges
+                    </button>
+</section>
+</div>
+</div>
+</main>
+<!-- Radar Chart Initialization Script -->
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('competencyRadar').getContext('2d');
+            
+            // Subtle theme colors
+            const primaryColor = 'rgba(0, 88, 188, 0.6)';
+            const primaryBorder = '#0058bc';
+            const gridColor = 'rgba(193, 198, 215, 0.2)'; // outline-variant with low opacity
+            const textColor = '#414755'; // on-surface-variant
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Logic', 'Data Struct', 'ML', 'UX/UI', 'Systems', 'Math'],
+                    datasets: [{
+                        label: 'Current Skill Vector',
+                        data: [85, 90, 75, 60, 80, 95],
+                        backgroundColor: primaryColor,
+                        borderColor: primaryBorder,
+                        borderWidth: 1.5,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: primaryBorder,
+                        pointBorderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(25, 28, 29, 0.9)',
+                            titleFont: { family: 'Inter', size: 12 },
+                            bodyFont: { family: 'Inter', size: 12 },
+                            padding: 10,
+                            cornerRadius: 4
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { color: gridColor },
+                            grid: { color: gridColor },
+                            pointLabels: {
+                                font: { family: 'Inter', size: 10, weight: '600' },
+                                color: textColor
+                            },
+                            ticks: {
+                                display: false,
+                                min: 0,
+                                max: 100,
+                                stepSize: 20
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

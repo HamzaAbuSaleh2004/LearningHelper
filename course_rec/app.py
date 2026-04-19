@@ -1336,6 +1336,8 @@ def recommend():
                     break
         base = max(cat_weight, 0.1)  # Minimum base so zero-weight courses still score
         score = base * level_bonus * rating_bonus * goal_bonus * sbert_boost
+        # Clamp to [0, 1] so the UI never shows >100% match
+        score = min(max(score, 0.0), 1.0)
         scored.append({**course, "rec_score": round(score, 3), "sbert_boosted": sbert_boost > 1.0})
 
     scored.sort(key=lambda x: x["rec_score"], reverse=True)

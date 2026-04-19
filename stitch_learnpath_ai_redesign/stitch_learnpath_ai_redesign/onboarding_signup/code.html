@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#6ddd81",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-background": "#191c1d",
+                      "on-tertiary-container": "#fffbff",
+                      "tertiary-fixed-dim": "#ffb4a9",
+                      "on-error-container": "#93000a",
+                      "background": "#f8f9fa",
+                      "on-secondary": "#ffffff",
+                      "outline": "#717786",
+                      "tertiary": "#b51b15",
+                      "on-tertiary-fixed": "#410001",
+                      "on-primary-fixed-variant": "#004493",
+                      "surface-bright": "#f8f9fa",
+                      "on-secondary-container": "#00722f",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#0058bc",
+                      "tertiary-fixed": "#ffdad5",
+                      "primary-container": "#0070eb",
+                      "inverse-on-surface": "#f0f1f2",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#d9372b",
+                      "surface-dim": "#d9dadb",
+                      "surface-container": "#edeeef",
+                      "secondary-container": "#86f898",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-tertiary-fixed-variant": "#930004",
+                      "surface-tint": "#005bc1",
+                      "outline-variant": "#c1c6d7",
+                      "surface-variant": "#e1e3e4",
+                      "on-primary-fixed": "#001a41",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#2e3132",
+                      "on-secondary-fixed": "#002108",
+                      "secondary": "#006e2c",
+                      "on-tertiary": "#ffffff",
+                      "surface": "#f8f9fa",
+                      "surface-container-high": "#e7e8e9",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#adc6ff",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed": "#89fa9b",
+                      "surface-container-low": "#f3f4f5",
+                      "on-surface-variant": "#414755",
+                      "on-primary-container": "#fefcff",
+                      "primary-fixed": "#d8e2ff",
+                      "on-secondary-fixed-variant": "#005320",
+                      "on-surface": "#191c1d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {},
+              "fontFamily": {
+                      "headline": [
+                              "Inter"
+                      ],
+                      "body": [
+                              "Inter"
+                      ],
+                      "label": [
+                              "Inter"
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .bg-primary-gradient {
+                background-image: linear-gradient(135deg, var(--tw-colors-primary), var(--tw-colors-primary-container));
+            }
+            .border-ghost {
+                border-color: rgba(193, 198, 215, 0.2);
+            }
+            .border-pulse {
+                border: 1px solid transparent;
+                background: linear-gradient(var(--tw-colors-surface-container-lowest), var(--tw-colors-surface-container-lowest)) padding-box,
+                            linear-gradient(135deg, var(--tw-colors-primary), var(--tw-colors-secondary)) border-box;
+            }
+            .shadow-ambient {
+                box-shadow: 0 32px 64px rgba(25, 28, 29, 0.04);
+            }
+        }
+      </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Left Side: Conceptual / Editorial Space -->
+<div class="hidden md:flex flex-col w-2/5 bg-surface-container-low p-12 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-gradient opacity-10"></div>
+<div class="absolute -top-40 -left-40 w-96 h-96 bg-primary-fixed rounded-full blur-[100px] opacity-50"></div>
+<div class="relative z-10 flex-grow flex flex-col justify-between">
+<div>
+<h1 class="font-headline font-black text-4xl tracking-tight text-on-surface mb-2">LearnPath AI</h1>
+<p class="font-headline text-lg font-medium text-on-surface-variant tracking-[-0.02em]">Intelligent Navigator</p>
+</div>
+<div class="space-y-6">
+<h2 class="font-headline font-bold text-5xl leading-tight tracking-[-0.02em] text-on-surface">
+                    Construct Your<br/>Cognitive<br/>Architecture.
+                </h2>
+<p class="text-on-surface-variant text-base max-w-sm leading-relaxed">
+                    A bespoke learning laboratory designed for precision. We mill the noise, leaving only the signal required for true mastery.
+                </p>
+</div>
+<div class="flex items-center gap-4 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">school</span>
+<span class="font-label uppercase tracking-[0.05em]">Academic Precision</span>
+</div>
+</div>
+</div>
+<!-- Right Side: Action Canvas -->
+<div class="flex-grow flex items-center justify-center p-6 md:p-12 relative">
+<div class="w-full max-w-xl">
+<!-- Mobile Brand Header (hidden on md) -->
+<div class="md:hidden mb-12 text-center">
+<h1 class="font-headline font-black text-3xl tracking-tight text-on-surface">LearnPath AI</h1>
+<p class="text-sm text-on-surface-variant mt-1">Intelligent Navigator</p>
+</div>
+<!-- Form Container -->
+<div class="bg-surface-container-lowest rounded-xl p-8 md:p-12 shadow-ambient relative z-10 border border-ghost">
+<div class="mb-10">
+<h2 class="font-headline font-bold text-3xl tracking-[-0.02em] text-on-surface mb-2">Initialize Profile</h2>
+<p class="text-on-surface-variant text-sm">Define the parameters of your learning environment.</p>
+</div>
+<form class="space-y-8">
+<!-- Core Identity -->
+<div class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant" for="firstName">First Name</label>
+<input class="w-full bg-surface-container-lowest border border-ghost text-on-surface text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="firstName" placeholder="e.g., Ada" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant" for="lastName">Last Name</label>
+<input class="w-full bg-surface-container-lowest border border-ghost text-on-surface text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="lastName" placeholder="e.g., Lovelace" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant" for="email">Institutional / Primary Email</label>
+<input class="w-full bg-surface-container-lowest border border-ghost text-on-surface text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="email" placeholder="hello@domain.edu" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant" for="password">Access Protocol (Password)</label>
+<input class="w-full bg-surface-container-lowest border border-ghost text-on-surface text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Academic Parameters -->
+<div class="pt-6 border-t border-ghost">
+<div class="space-y-2 mb-6">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant" for="studyLevel">Current Academic Tier</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-lowest border border-ghost text-on-surface text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-0 transition-colors cursor-pointer" id="studyLevel">
+<option disabled="" selected="" value="">Select Tier...</option>
+<option value="hs">Secondary Education</option>
+<option value="ug">Undergraduate</option>
+<option value="pg">Postgraduate</option>
+<option value="phd">Doctoral / Research</option>
+<option value="pro">Professional Development</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Learning Goals Bento Grid -->
+<div class="space-y-3">
+<label class="block font-label text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-variant">Strategic Objectives</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="relative flex cursor-pointer group">
+<input class="peer sr-only" name="goal" type="checkbox" value="cert"/>
+<div class="w-full bg-surface-container-low border border-ghost rounded-lg p-4 transition-all peer-checked:border-pulse peer-checked:bg-surface-container-lowest hover:bg-surface-container">
+<div class="flex items-center justify-between mb-2">
+<span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary">workspace_premium</span>
+<div class="w-4 h-4 border border-outline-variant rounded flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors">
+<span class="material-symbols-outlined text-[10px] text-on-primary opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+<span class="block text-sm font-medium text-on-surface">Certification</span>
+</div>
+</label>
+<label class="relative flex cursor-pointer group">
+<input class="peer sr-only" name="goal" type="checkbox" value="skill"/>
+<div class="w-full bg-surface-container-low border border-ghost rounded-lg p-4 transition-all peer-checked:border-pulse peer-checked:bg-surface-container-lowest hover:bg-surface-container">
+<div class="flex items-center justify-between mb-2">
+<span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary">build</span>
+<div class="w-4 h-4 border border-outline-variant rounded flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors">
+<span class="material-symbols-outlined text-[10px] text-on-primary opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+<span class="block text-sm font-medium text-on-surface">Skill Acquisition</span>
+</div>
+</label>
+<label class="relative flex cursor-pointer group">
+<input class="peer sr-only" name="goal" type="checkbox" value="research"/>
+<div class="w-full bg-surface-container-low border border-ghost rounded-lg p-4 transition-all peer-checked:border-pulse peer-checked:bg-surface-container-lowest hover:bg-surface-container">
+<div class="flex items-center justify-between mb-2">
+<span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary">science</span>
+<div class="w-4 h-4 border border-outline-variant rounded flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors">
+<span class="material-symbols-outlined text-[10px] text-on-primary opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+<span class="block text-sm font-medium text-on-surface">Research</span>
+</div>
+</label>
+<label class="relative flex cursor-pointer group">
+<input class="peer sr-only" name="goal" type="checkbox" value="curiosity"/>
+<div class="w-full bg-surface-container-low border border-ghost rounded-lg p-4 transition-all peer-checked:border-pulse peer-checked:bg-surface-container-lowest hover:bg-surface-container">
+<div class="flex items-center justify-between mb-2">
+<span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary">explore</span>
+<div class="w-4 h-4 border border-outline-variant rounded flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors">
+<span class="material-symbols-outlined text-[10px] text-on-primary opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+<span class="block text-sm font-medium text-on-surface">Exploration</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Action -->
+<div class="pt-8">
+<button class="w-full bg-primary-gradient text-on-primary font-headline font-semibold py-4 rounded-lg shadow-sm border border-primary-fixed-dim/30 hover:opacity-90 transition-opacity flex justify-center items-center gap-2" type="button">
+<span>Synthesize Profile</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<div class="mt-6 text-center">
+<p class="text-sm text-on-surface-variant">
+                                System already initialized? 
+                                <a class="text-primary font-medium hover:text-primary-container transition-colors ml-1" href="#">Authenticate here.</a>
+</p>
+</div>
+</div>
+</form>
+</div>
+<div class="mt-8 text-center md:text-left text-xs text-outline font-label uppercase tracking-[0.05em]">
+                Secure Protocol v2.4 • End-to-End Encrypted
+            </div>
+</div>
+</div>
+</body></html>

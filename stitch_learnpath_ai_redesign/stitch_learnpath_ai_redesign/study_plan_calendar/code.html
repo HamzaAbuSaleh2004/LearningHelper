@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Plan &amp; Calendar - LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6ddd81",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "outline": "#717786",
+                        "tertiary": "#b51b15",
+                        "on-tertiary-fixed": "#410001",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00722f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#0058bc",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#0070eb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#d9372b",
+                        "surface-dim": "#d9dadb",
+                        "surface-container": "#edeeef",
+                        "secondary-container": "#86f898",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#930004",
+                        "surface-tint": "#005bc1",
+                        "outline-variant": "#c1c6d7",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#001a41",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed": "#002108",
+                        "secondary": "#006e2c",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#89fa9b",
+                        "surface-container-low": "#f3f4f5",
+                        "on-surface-variant": "#414755",
+                        "on-primary-container": "#fefcff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#005320",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen antialiased flex">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-slate-50 dark:bg-slate-900 font-['Inter'] text-sm tracking-wide uppercase label-md border-r border-slate-200/20 dark:border-slate-800/20 z-40 hidden md:flex">
+<div class="p-4 flex flex-col gap-2 h-full">
+<div class="mb-8 px-4 py-2">
+<div class="flex items-center gap-3 mb-2">
+<img alt="Academic Architect Logo" class="w-8 h-8 rounded-full" data-alt="professional modern abstract logo mark in blue" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw_QMpGKtg0xJsrSiYj8TZdBq9HYNPz_Gn-0jYDAwSwFCdsAfxaitzNzWYWK22-vOSF0rcJNO8Sasi_PrZ0pKSdL8mx_4Zh2mtz_fC3D1PuRxdNZDmbcf9G4tGt8Zinz3rlDM2MrDRbBfOpombEZP8p7MfEGeuD0anKAiRNVKSe13K_AJiPA9voHZgv1cqYV9jVVVLZCt12PGips8H6HRlbHkSvSMu2yR41RfEqgd9DqkBSPKxBcghFPYSoxHgm1tRTAIXxLY2_wI"/>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white normal-case">LearnPath AI</h1>
+<p class="text-xs text-slate-500 normal-case font-medium">Intelligent Navigator</p>
+</div>
+</div>
+<button class="w-full mt-4 bg-gradient-to-br from-primary to-primary-container text-on-primary py-2 px-4 rounded-lg font-semibold tracking-wide text-xs outline outline-1 outline-primary-fixed hover:opacity-90 transition-opacity">Start New Course</button>
+</div>
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Overview
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-950 rounded-lg shadow-sm font-bold border-l-4 border-blue-600 focus-within:ring-2 ring-blue-500/20" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+                    Learning
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+                    Catalog
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Friends
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg focus-within:ring-2 ring-blue-500/20" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Analytics
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 min-h-screen bg-surface flex flex-col">
+<!-- TopNavBar (Mobile mainly, or contextual header) -->
+<header class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl font-['Inter'] antialiased tracking-tight docked full-width top-0 sticky z-50 flex justify-between items-center h-16 px-6 w-full md:hidden shadow-[0_32px_64px_rgba(0,0,0,0.04)] border-b border-slate-200/20 dark:border-slate-800/20">
+<div class="text-xl font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-50">LearnPath AI</div>
+<button class="text-slate-500 hover:bg-slate-100/50 p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Page Content -->
+<div class="flex-1 p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
+<!-- Left Column: Study Plan Checklist -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<div class="mb-4">
+<h2 class="text-4xl font-headline font-bold tracking-tight text-on-surface mb-2">Study Plan</h2>
+<p class="text-body-md text-on-surface-variant max-w-2xl">Your personalized roadmap. Stay on track with daily milestones and theoretical deep dives.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0_32px_64px_rgba(25,28,29,0.04)] outline outline-1 outline-outline-variant/20 relative overflow-hidden">
+<!-- Subtle AI pulse border effect via gradient in absolute div -->
+<div class="absolute inset-0 border border-transparent rounded-xl pointer-events-none" style="background: linear-gradient(135deg, var(--tw-colors-primary), var(--tw-colors-secondary)) border-box; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.1;"></div>
+<h3 class="text-2xl font-headline font-semibold tracking-tight text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">route</span>
+                        Module Progress
+                    </h3>
+<div class="flex flex-col gap-4">
+<!-- Checklist Item 1 (Completed) -->
+<label class="flex items-start gap-4 p-4 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group">
+<div class="pt-1">
+<input checked="" class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-lowest bg-surface-container-lowest checked:bg-primary" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface line-through opacity-70">Foundations of Neural Networks</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-xs font-label uppercase tracking-widest">Completed</span>
+</div>
+<p class="text-sm text-on-surface-variant opacity-70">Understand backpropagation and basic perceptron architecture.</p>
+</div>
+</label>
+<!-- Checklist Item 2 (Active) -->
+<label class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-lg"></div>
+<div class="pt-1">
+<input class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-low bg-surface-container-lowest" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface">Convolutional Architectures</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary text-xs font-label uppercase tracking-widest">Current</span>
+</div>
+<p class="text-sm text-on-surface-variant">Deep dive into ResNet and VGG models. Practical implementation in PyTorch.</p>
+</div>
+</label>
+<!-- Checklist Item 3 -->
+<label class="flex items-start gap-4 p-4 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-lowest bg-surface-container-lowest" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface">Sequence Models &amp; RNNs</span>
+</div>
+<p class="text-sm text-on-surface-variant">LSTMs, GRUs, and handling time-series data effectively.</p>
+</div>
+</label>
+<!-- Checklist Item 4 -->
+<label class="flex items-start gap-4 p-4 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-lowest bg-surface-container-lowest" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface">Attention Mechanisms</span>
+</div>
+<p class="text-sm text-on-surface-variant">The core mathematics behind Self-Attention and Multi-head Attention.</p>
+</div>
+</label>
+<!-- Checklist Item 5 -->
+<label class="flex items-start gap-4 p-4 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-lowest bg-surface-container-lowest" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface">Transformers from Scratch</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/10 text-tertiary text-xs font-label uppercase tracking-widest">Crucial</span>
+</div>
+<p class="text-sm text-on-surface-variant">Building the Encoder-Decoder architecture block by block.</p>
+</div>
+</label>
+<!-- Checklist Item 6 -->
+<label class="flex items-start gap-4 p-4 rounded-lg hover:bg-surface-container-highest/50 transition-colors cursor-pointer group">
+<div class="pt-1">
+<input class="w-5 h-5 rounded-sm border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface-container-lowest bg-surface-container-lowest" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-sm font-semibold text-on-surface">Optimization Strategies</span>
+</div>
+<p class="text-sm text-on-surface-variant">Adam, RMSprop, and learning rate scheduling techniques.</p>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Right Column: 5-Week Calendar Sidebar -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_32px_64px_rgba(25,28,29,0.04)] outline outline-1 outline-outline-variant/20 sticky top-24">
+<h3 class="text-xl font-headline font-semibold tracking-tight text-on-surface mb-6 flex justify-between items-center">
+                        Schedule
+                        <span class="text-sm font-normal text-on-surface-variant">November 2023</span>
+</h3>
+<!-- Calendar Legend -->
+<div class="flex gap-4 mb-6 text-xs font-label uppercase tracking-wider text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-secondary"></div> Done
+                        </div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-primary"></div> Scheduled
+                        </div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div> Missed
+                        </div>
+</div>
+<!-- Minimalist Calendar Grid -->
+<div class="grid grid-cols-7 gap-1 text-center mb-2 text-xs font-label text-on-surface-variant">
+<div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+</div>
+<div class="grid grid-cols-7 gap-2 text-sm font-medium text-on-surface">
+<!-- Week 1 -->
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-on-surface-variant opacity-50">29</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-on-surface-variant opacity-50">30</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer text-on-surface-variant opacity-50">31</div>
+<div class="p-2 rounded bg-secondary-container/20 text-secondary outline outline-1 outline-secondary/30 cursor-pointer">1</div>
+<div class="p-2 rounded bg-secondary-container/20 text-secondary outline outline-1 outline-secondary/30 cursor-pointer">2</div>
+<div class="p-2 rounded bg-secondary-container/20 text-secondary outline outline-1 outline-secondary/30 cursor-pointer">3</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">4</div>
+<!-- Week 2 -->
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">5</div>
+<div class="p-2 rounded bg-secondary-container/20 text-secondary outline outline-1 outline-secondary/30 cursor-pointer">6</div>
+<div class="p-2 rounded bg-tertiary-container/10 text-tertiary outline outline-1 outline-tertiary/30 cursor-pointer relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-tertiary after:rounded-full">7</div>
+<div class="p-2 rounded bg-secondary-container/20 text-secondary outline outline-1 outline-secondary/30 cursor-pointer">8</div>
+<div class="p-2 rounded bg-primary text-on-primary shadow-sm shadow-primary/20 cursor-pointer font-bold">9</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full">10</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">11</div>
+<!-- Week 3 -->
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">12</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full">13</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">14</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full">15</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">16</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">17</div>
+<div class="p-2 rounded hover:bg-surface-container-highest cursor-pointer">18</div>
+</div>
+<!-- Upcoming Session Widget -->
+<div class="mt-8 pt-6 border-t border-outline-variant/20">
+<h4 class="text-sm font-label uppercase tracking-widest text-on-surface-variant mb-4">Up Next</h4>
+<div class="flex flex-col gap-3">
+<div class="bg-surface-container p-4 rounded-lg flex items-center justify-between">
+<div>
+<p class="font-semibold text-sm">ConvNet Lab</p>
+<p class="text-xs text-on-surface-variant mt-0.5">Today, 2:00 PM</p>
+</div>
+<button class="text-primary hover:bg-surface-container-high p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl">play_circle</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

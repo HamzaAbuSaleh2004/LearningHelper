@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LearnPath AI - Mentor Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#6ddd81",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-background": "#191c1d",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb4a9",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "outline": "#717786",
+                        "tertiary": "#b51b15",
+                        "on-tertiary-fixed": "#410001",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00722f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#0058bc",
+                        "tertiary-fixed": "#ffdad5",
+                        "primary-container": "#0070eb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#d9372b",
+                        "surface-dim": "#d9dadb",
+                        "surface-container": "#edeeef",
+                        "secondary-container": "#86f898",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#930004",
+                        "surface-tint": "#005bc1",
+                        "outline-variant": "#c1c6d7",
+                        "surface-variant": "#e1e3e4",
+                        "on-primary-fixed": "#001a41",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed": "#002108",
+                        "secondary": "#006e2c",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc6ff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#89fa9b",
+                        "surface-container-low": "#f3f4f5",
+                        "on-surface-variant": "#414755",
+                        "on-primary-container": "#fefcff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#005320",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #191c1d; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .ghost-border { border: 1px solid rgba(193, 198, 215, 0.2); }
+        .pulse-border { position: relative; }
+        .pulse-border::before {
+            content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px;
+            background: linear-gradient(135deg, #0058bc, #006e2c);
+            z-index: -1; border-radius: inherit; opacity: 0.5;
+        }
+        .ai-gradient-text { background: linear-gradient(135deg, #0058bc, #0070eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Scrollbar styling for chat area */
+        .chat-scroll::-webkit-scrollbar { width: 6px; }
+        .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+        .chat-scroll::-webkit-scrollbar-thumb { background-color: #e1e3e4; border-radius: 10px; }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-surface antialiased">
+<!-- SideNavBar (from JSON, acting as 'Learning' intent loosely, but keeping labels exact) -->
+<nav class="bg-surface-container-low h-screen w-64 fixed left-0 top-0 flex flex-col hidden md:flex border-r border-outline-variant/20 z-40">
+<div class="p-6">
+<h1 class="text-lg font-black tracking-tighter text-on-surface">LearnPath AI</h1>
+<p class="text-sm text-on-surface-variant mt-1">Intelligent Navigator</p>
+</div>
+<div class="flex flex-col gap-2 px-4 flex-grow">
+<!-- Active Tab: Learning (closest intent to AI Mentor) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-sm tracking-wide uppercase font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-lowest rounded-lg shadow-[0_4px_24px_rgba(0,0,0,0.04)] font-bold border-l-4 border-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="school" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-['Inter'] text-sm tracking-wide uppercase font-bold">Learning</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-['Inter'] text-sm tracking-wide uppercase font-medium">Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] text-sm tracking-wide uppercase font-medium">Friends</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-sm tracking-wide uppercase font-medium">Analytics</span>
+</a>
+</div>
+<div class="p-4">
+<button class="w-full py-3 px-4 rounded-lg bg-gradient-to-br from-primary to-primary-container text-on-primary font-semibold text-sm tracking-wide shadow-[0_8px_16px_rgba(0,88,188,0.2)] hover:shadow-[0_12px_24px_rgba(0,88,188,0.3)] transition-all flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Start New Course
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col md:ml-64 h-screen relative bg-surface">
+<!-- TopNavBar (from JSON) -->
+<header class="bg-white/80 backdrop-blur-xl font-['Inter'] antialiased tracking-tight docked full-width top-0 sticky z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)] flex justify-between items-center h-16 px-6 w-full ghost-border border-b-0">
+<div class="flex items-center gap-4">
+<!-- Mobile menu trigger placeholder -->
+<button class="md:hidden text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="text-xl font-bold tracking-[-0.02em] text-on-surface md:hidden">LearnPath AI</div>
+<!-- Search Bar (on_left) -->
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant/20 focus-within:border-primary/50 transition-colors w-64">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm ml-2 w-full text-on-surface placeholder-on-surface-variant/50" placeholder="Search knowledge base..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a young professional woman with natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCJnqd1_mlsdWIiwtlIdDTPJ9rtLrGrihvJ1wkuSrxZyaW8876SIAcd-VvRGS1jeFjevwwNgh9vtp_gYQwpauqnZzXZvjTfws0H4JyaBXorRnywWvpuc6awWkbbr0FhbiOS24iM7dCniEEvjqo2b5D16QRVy61YD0z7iaIUPwn9Yrf8EEo3-VTss4GZvzB_JtQPclYwQx-jovGgrSgKKQy_mUGw537Qp6rSpGddt9lOSXrezFV5swRddUw7pfb-kd7a8fEvhHs3Go"/>
+</div>
+</div>
+</header>
+<!-- Chat Workspace Layout -->
+<div class="flex-1 flex flex-col h-[calc(100vh-4rem)] p-4 md:p-8 max-w-6xl mx-auto w-full gap-6">
+<!-- Context Header -->
+<div class="flex items-end justify-between px-2">
+<div>
+<h2 class="text-3xl font-bold tracking-tight text-on-surface ai-gradient-text">AI Mentor</h2>
+<p class="text-on-surface-variant text-sm mt-1 max-w-2xl">Advanced Cognitive Assistant. Session focused on Systems Architecture.</p>
+</div>
+<div class="hidden md:flex gap-2">
+<button class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary border border-outline-variant/30 rounded-full hover:bg-surface-container-high transition-colors">Export Log</button>
+<button class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-error border border-error/30 rounded-full hover:bg-error-container/50 transition-colors">End Session</button>
+</div>
+</div>
+<!-- Chat Canvas -->
+<div class="flex-1 bg-surface-container-lowest rounded-xl shadow-[0_16px_48px_rgba(0,0,0,0.03)] ghost-border overflow-hidden flex flex-col relative pulse-border">
+<!-- Chat Scroll Area -->
+<div class="flex-1 overflow-y-auto chat-scroll p-6 md:p-8 space-y-8">
+<!-- Timestamp -->
+<div class="flex justify-center">
+<span class="text-xs font-medium text-on-surface-variant/60 uppercase tracking-widest">Today, 10:24 AM</span>
+</div>
+<!-- AI Mentor Message -->
+<div class="flex gap-4 max-w-4xl">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-primary text-[20px]" data-icon="psychology">psychology</span>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-bold text-primary uppercase tracking-wide">Mentor AI</span>
+<div class="bg-surface-container-low p-5 rounded-2xl rounded-tl-sm text-on-surface text-sm leading-relaxed border border-outline-variant/10">
+<p>Welcome back. We left off discussing microservices communication patterns. Based on your recent quiz scores, I recommend we dive deeper into Event-Driven Architectures. Shall we explore Apache Kafka or RabbitMQ first?</p>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex gap-4 max-w-4xl ml-auto flex-row-reverse">
+<div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a young professional woman with natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7uNvqgGubBp6lTteikHwc4UvhYxnl81Ukl1EqKx5ssY9QJ-dL8de6Tslm-_6BRj0-1W23JnJLVbMuS5oEbePKbXvqcsRR3bsU_SZ3pMSB_aERNDRsclxRg0kpYnkIaRIxOxcGC9OouB_XPGLPYF8Jqsz05NVUFVpvNKLLgKPmnv-uwvfnzaOUBDzkWD0kyxjDXsFC0sCnrBb7PzdvjqT6BSh8ByFSl1id_XbIa_7zhDw9_xPlJX4B6F2ydKmliRoyYZ9lj7WyfJ8"/>
+</div>
+<div class="flex flex-col gap-2 items-end">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">You</span>
+<div class="bg-primary/5 p-5 rounded-2xl rounded-tr-sm text-on-surface text-sm leading-relaxed border border-primary/10">
+<p>Let's start with Kafka. I'm struggling to understand partition rebalancing.</p>
+</div>
+</div>
+</div>
+<!-- AI Mentor Complex Message -->
+<div class="flex gap-4 max-w-4xl">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-primary text-[20px]" data-icon="psychology">psychology</span>
+</div>
+<div class="flex flex-col gap-2 w-full">
+<span class="text-xs font-bold text-primary uppercase tracking-wide">Mentor AI</span>
+<div class="bg-surface-container-low p-5 rounded-2xl rounded-tl-sm text-on-surface text-sm leading-relaxed border border-outline-variant/10 w-full space-y-4">
+<p>Kafka partition rebalancing is a critical concept. It happens when a new consumer joins a group, an existing consumer leaves, or a new partition is added. Think of it as redistributing workloads.</p>
+<!-- Code snippet / Concept box within chat -->
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant/20 font-mono text-xs text-on-surface-variant">
+                                    // Trigger Events for Rebalance<br/>
+                                    1. Consumer Group membership changes.<br/>
+                                    2. Topic metadata changes (partitions added).<br/>
+<br/>
+<span class="text-primary">// Important Note:</span><br/>
+                                    During rebalance, consumers cannot consume messages. This is known as a "Stop the World" event in older Kafka versions.
+                                </div>
+<p>Would you like to run a quick simulation to see how messages are distributed across partitions before and after a rebalance?</p>
+<!-- Interactive Elements in Chat -->
+<div class="flex gap-3 pt-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-primary/20 rounded-lg text-primary text-xs font-semibold hover:bg-primary/5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="play_arrow">play_arrow</span>
+                                        Run Simulation
+                                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant/20 rounded-lg text-on-surface-variant text-xs font-semibold hover:bg-surface-container-high transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="menu_book">menu_book</span>
+                                        Read Documentation
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Thinking Indicator -->
+<div class="flex gap-4 max-w-4xl">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center opacity-70">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="psychology">psychology</span>
+</div>
+<div class="flex flex-col justify-center">
+<div class="bg-surface-container-lowest p-3 rounded-2xl rounded-tl-sm border border-outline-variant/10 flex items-center gap-2 shadow-sm">
+<div class="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+<div class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+<div class="w-1.5 h-1.5 bg-primary/80 rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+<span class="ml-2 text-xs font-medium text-on-surface-variant italic">Mentor is analyzing...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-4 bg-surface-container-lowest border-t border-outline-variant/10 z-10">
+<!-- Suggestion Chips -->
+<div class="flex gap-2 overflow-x-auto pb-4 chat-scroll">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-xs font-semibold border border-outline-variant/20 hover:bg-surface-container-high hover:text-on-surface transition-colors">Explain Cooperative Rebalancing</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-xs font-semibold border border-outline-variant/20 hover:bg-surface-container-high hover:text-on-surface transition-colors">Show me a Python example</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-xs font-semibold border border-outline-variant/20 hover:bg-surface-container-high hover:text-on-surface transition-colors">What happens to uncommitted offsets?</button>
+</div>
+<!-- Input Box -->
+<div class="relative flex items-center bg-surface-container-low rounded-xl border border-outline-variant/30 focus-within:border-primary focus-within:shadow-[0_0_0_2px_rgba(0,88,188,0.1)] transition-all">
+<button class="p-3 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder-on-surface-variant/50 py-4 px-2" placeholder="Ask a question or request a coding example..." type="text"/>
+<button class="p-3 mr-1 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="send" data-weight="fill" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="text-center mt-2">
+<span class="text-[10px] text-on-surface-variant/60 font-medium">AI Mentor can make mistakes. Verify critical technical details.</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

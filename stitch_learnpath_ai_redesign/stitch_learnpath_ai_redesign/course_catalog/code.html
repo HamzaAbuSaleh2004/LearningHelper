@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Course Catalog - LearnPath AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#6ddd81",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-background": "#191c1d",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-fixed-dim": "#ffb4a9",
+                    "on-error-container": "#93000a",
+                    "background": "#f8f9fa",
+                    "on-secondary": "#ffffff",
+                    "outline": "#717786",
+                    "tertiary": "#b51b15",
+                    "on-tertiary-fixed": "#410001",
+                    "on-primary-fixed-variant": "#004493",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary-container": "#00722f",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#0058bc",
+                    "tertiary-fixed": "#ffdad5",
+                    "primary-container": "#0070eb",
+                    "inverse-on-surface": "#f0f1f2",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#d9372b",
+                    "surface-dim": "#d9dadb",
+                    "surface-container": "#edeeef",
+                    "secondary-container": "#86f898",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-fixed-variant": "#930004",
+                    "surface-tint": "#005bc1",
+                    "outline-variant": "#c1c6d7",
+                    "surface-variant": "#e1e3e4",
+                    "on-primary-fixed": "#001a41",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2e3132",
+                    "on-secondary-fixed": "#002108",
+                    "secondary": "#006e2c",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#89fa9b",
+                    "surface-container-low": "#f3f4f5",
+                    "on-surface-variant": "#414755",
+                    "on-primary-container": "#fefcff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .pulse-border {
+            position: relative;
+        }
+        .pulse-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(to bottom right, #0058bc, #006e2c);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(193, 198, 215, 0.2);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #0058bc, #0070eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex flex-col md:flex-row min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-slate-50 dark:bg-slate-900 border-r border-slate-200/20 dark:border-slate-800/20 z-40">
+<!-- Brand Header -->
+<div class="flex items-center gap-4 px-6 py-8">
+<img alt="Academic Architect Logo" class="w-10 h-10 rounded-lg object-cover" data-alt="Abstract blue architectural 3d rendering milled geometry logo mark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL3fuTlMD5gvH6EgJLwFELM5wl3Tgi_JMHVSzkLTJPiTyNU1ABp0o4-OByOOOg1BXtO92FcKi-dGxnJZUlyjN0OhjjngxSqn7hu2mR_yCyo9CeCda6nwjjMZCQGACYF06c92SMgvI5WE4Pf31e5QVQSd3qNI-AQS2ko9vrO4p4dU_j80C6YGAYmZ-Z9KQcBYYrjKpVmTRRVNVytw7FfIlZrKdnftKgr0KTiFsLhKNFUA0NrttaLfAfv44_HPE4rwtoMVOmeN276VU"/>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white">LearnPath AI</h1>
+<p class="text-xs text-slate-500 font-medium">Intelligent Navigator</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 p-4 flex-grow">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-['Inter'] text-sm tracking-wide uppercase label-md hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-['Inter'] text-sm tracking-wide uppercase label-md hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">school</span>
+                Learning
+            </a>
+<!-- Active -->
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-950 rounded-lg shadow-sm font-bold border-l-4 border-blue-600 font-['Inter'] text-sm tracking-wide uppercase label-md" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                Catalog
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-['Inter'] text-sm tracking-wide uppercase label-md hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+                Friends
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-['Inter'] text-sm tracking-wide uppercase label-md hover:bg-slate-200/50 dark:hover:bg-slate-800/80 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+                Analytics
+            </a>
+</div>
+<!-- CTA -->
+<div class="p-4 mt-auto">
+<button class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-lg font-semibold tracking-wide shadow-[0_4px_12px_rgba(0,88,188,0.2)] hover:shadow-[0_6px_16px_rgba(0,88,188,0.3)] transition-all ghost-border flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Start New Course
+            </button>
+</div>
+</nav>
+<!-- TopNavBar (Mobile Only) -->
+<header class="md:hidden flex justify-between items-center h-16 px-6 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-[0_32px_64px_rgba(0,0,0,0.04)]">
+<h1 class="text-xl font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-50 font-['Inter'] antialiased tracking-tight">LearnPath AI</h1>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover" data-alt="User profile portrait of a young woman with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCT60YpN6gURCInUfVYiOUyvpn3n7H_09q35WkmGbRfUIHYGqm1dh_fkOXGLGXTEkjqM7K_rdCW6LeFFGyFI3jjoRv-jiXf6n-yFJrbLhf9f9GbjPqpcANBvDEmMKECgEIFycweChHijG5ceuCQBh991pa9M1h9g4ikazpwgRd6bIBxqVeMpK3pl7e9ViZmwtwn16yl7mEZQwB1gNtRbIz2W0knG4D4siOQyg_PBORJKINQ9nelgSRGS4uzNS0VglstWDxmA0hmgs"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 bg-surface min-h-screen">
+<!-- Search & Filter Header Section -->
+<section class="bg-surface-container-low px-6 md:px-12 py-10 rounded-b-xl md:rounded-bl-3xl shadow-[0_8px_32px_rgba(25,28,29,0.02)]">
+<div class="max-w-6xl mx-auto flex flex-col gap-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div>
+<h2 class="text-3xl md:text-5xl font-extrabold tracking-[-0.02em] text-on-surface mb-2">Explore Catalog</h2>
+<p class="text-on-surface-variant font-medium text-lg">Discover high-precision courses milled for intelligence.</p>
+</div>
+</div>
+<!-- Search and Filter Bar -->
+<div class="bg-surface-container-lowest p-2 rounded-xl flex flex-col md:flex-row gap-2 shadow-[0_4px_24px_rgba(25,28,29,0.04)] ghost-border">
+<!-- Keyword Search -->
+<div class="flex-1 flex items-center bg-surface px-4 py-3 rounded-lg focus-within:ring-1 ring-primary transition-all">
+<span class="material-symbols-outlined text-outline mr-3">search</span>
+<input class="w-full bg-transparent border-none outline-none text-on-surface placeholder-outline text-body-md" placeholder="Search by keyword, topic, or skill..." type="text"/>
+</div>
+<!-- Filters -->
+<div class="flex flex-row gap-2">
+<div class="relative group">
+<button class="flex items-center gap-2 bg-surface px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container transition-colors ghost-border">
+<span class="material-symbols-outlined text-sm">category</span>
+                                Category
+                                <span class="material-symbols-outlined text-sm ml-2">expand_more</span>
+</button>
+<!-- Dropdown mock (hidden by default) -->
+<div class="absolute top-full mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-[0_12px_48px_rgba(25,28,29,0.08)] ghost-border py-2 hidden group-hover:block z-20">
+<a class="block px-4 py-2 text-on-surface hover:bg-surface-container-low text-body-md" href="#">Machine Learning</a>
+<a class="block px-4 py-2 text-on-surface hover:bg-surface-container-low text-body-md" href="#">Data Science</a>
+<a class="block px-4 py-2 text-on-surface hover:bg-surface-container-low text-body-md" href="#">Cloud Architecture</a>
+</div>
+</div>
+<div class="relative group">
+<button class="flex items-center gap-2 bg-surface px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container transition-colors ghost-border">
+<span class="material-symbols-outlined text-sm">hub</span>
+                                Platform
+                                <span class="material-symbols-outlined text-sm ml-2">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Active Filter Tags -->
+<div class="flex flex-wrap gap-2 items-center">
+<span class="text-xs text-outline font-bold uppercase tracking-wider mr-2">Active:</span>
+<span class="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-label-md tracking-wider">
+                        Machine Learning
+                        <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-primary-container">close</span>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container text-on-surface-variant px-3 py-1.5 rounded-full text-label-md tracking-wider">
+                        Clear All
+                    </span>
+</div>
+</div>
+</section>
+<!-- Course Grid Area -->
+<section class="p-6 md:p-12 max-w-6xl mx-auto">
+<!-- Grid Layout (Bento-inspired, asymmetrical) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(320px,auto)]">
+<!-- Featured Course Card (Takes 2 cols on md) -->
+<article class="md:col-span-8 bg-surface-container-lowest rounded-xl p-6 md:p-8 flex flex-col md:flex-row gap-8 shadow-[0_4px_32px_rgba(25,28,29,0.03)] hover:shadow-[0_12px_48px_rgba(25,28,29,0.06)] transition-shadow duration-300 ghost-border group pulse-border relative overflow-hidden">
+<div class="md:w-1/2 rounded-lg overflow-hidden relative">
+<img alt="Advanced Neural Networks" class="w-full h-full object-cover absolute inset-0 transform group-hover:scale-105 transition-transform duration-700" data-alt="Abstract visualization of neural networks with glowing blue nodes on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhNQOJtDTEyUUIs-YsA2-TS9Gr9S4uY-NAqGg_pNVDkh2pZCvRirS7inhD37U7XfAv3Sm9G69hZfyUjIkVkH6_suBvsHMm-VZ3XTP1u0STNLigtQQmmT9MMosEDzmNTjVTCLo11Fl7kLGRaD0ocYAZZeG7qaJfvEAjjoZkfAFKnbajbGFTt0uTk1DevLFdHX06lImeTHmOZt4fqsp_5AbmfleFROlcIXFxtyEhH56xhu6YOMQnxlokq0-ILI7yXbXUAUV04sjqplM"/>
+<div class="absolute top-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary ghost-border flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">star</span>
+                            Featured
+                        </div>
+</div>
+<div class="md:w-1/2 flex flex-col justify-center gap-4">
+<div class="flex justify-between items-start">
+<span class="text-xs font-bold uppercase tracking-wider text-outline">Deep Learning</span>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Stanford</span>
+</div>
+<h3 class="text-2xl md:text-3xl font-extrabold text-on-surface leading-tight tracking-tight">Advanced Neural Networks Architectures</h3>
+<p class="text-on-surface-variant text-body-md line-clamp-3">Dive deep into the mathematical foundations of modern AI. Construct resilient models using high-grade architectural principles.</p>
+<div class="flex items-center gap-4 mt-auto pt-4 border-t border-surface-container">
+<div class="flex items-center gap-1 text-sm font-semibold text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.9 <span class="text-outline font-normal">(1.2k)</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant"></div>
+<div class="text-sm font-semibold text-on-surface">
+                                $199
+                            </div>
+</div>
+</div>
+</article>
+<!-- Standard Card 1 -->
+<article class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4 shadow-[0_4px_32px_rgba(25,28,29,0.03)] hover:-translate-y-1 hover:shadow-[0_12px_48px_rgba(25,28,29,0.06)] transition-all duration-300 ghost-border flex-grow">
+<div class="flex justify-between items-center mb-2">
+<span class="bg-surface-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide text-on-surface-variant">Coursera</span>
+<span class="material-symbols-outlined text-outline hover:text-primary cursor-pointer transition-colors">bookmark_border</span>
+</div>
+<h3 class="text-xl font-bold text-on-surface tracking-tight leading-snug">Applied Machine Learning in Python</h3>
+<p class="text-on-surface-variant text-sm flex-grow">Learn to apply machine learning methods and models to real-world datasets.</p>
+<div class="flex justify-between items-end mt-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1 text-xs font-bold text-on-surface">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.7
+                            </div>
+<span class="text-xs text-outline font-medium">Medium Level</span>
+</div>
+<div class="text-lg font-bold text-on-surface">$49</div>
+</div>
+</article>
+<!-- Standard Card 2 -->
+<article class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4 shadow-[0_4px_32px_rgba(25,28,29,0.03)] hover:-translate-y-1 hover:shadow-[0_12px_48px_rgba(25,28,29,0.06)] transition-all duration-300 ghost-border flex-grow relative overflow-hidden">
+<div class="absolute right-0 top-0 w-24 h-24 bg-tertiary-container/10 rounded-bl-full -mr-4 -mt-4 z-0"></div>
+<div class="relative z-10 flex flex-col h-full gap-4">
+<div class="flex justify-between items-center mb-2">
+<span class="bg-surface-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide text-on-surface-variant">Udacity</span>
+<span class="material-symbols-outlined text-outline hover:text-primary cursor-pointer transition-colors">bookmark_border</span>
+</div>
+<h3 class="text-xl font-bold text-on-surface tracking-tight leading-snug">AI for Healthcare Leaders</h3>
+<p class="text-on-surface-variant text-sm flex-grow">Strategic implementation of AI models in clinical and administrative workflows.</p>
+<div class="flex justify-between items-end mt-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1 text-xs font-bold text-on-surface">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    4.8
+                                </div>
+<span class="text-xs text-outline font-medium">Advanced</span>
+</div>
+<div class="text-lg font-bold text-on-surface">$299</div>
+</div>
+</div>
+</article>
+<!-- Standard Card 3 (Image focus) -->
+<article class="md:col-span-4 bg-surface-container-lowest rounded-xl flex flex-col shadow-[0_4px_32px_rgba(25,28,29,0.03)] hover:-translate-y-1 hover:shadow-[0_12px_48px_rgba(25,28,29,0.06)] transition-all duration-300 ghost-border overflow-hidden group">
+<div class="h-40 overflow-hidden relative">
+<img alt="Hardware AI" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a computer microchip processor with complex circuitry patterns" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-BPnQsNwAoOSA21p_0lQC-qxPL3cKQHzoc9VNLEjR510SoALStmmfNuJoilQcvF1v1BE9NkRik5ko1_cEvt2VSQtZDkkjw9FzNDkAa__MJDPQb5g5ioSHcUieuZh-5ewN6G1gCTnC2to_z_hp1dPqgImbzRAuaR5cUeOVwk3-WwBPRXdV9P8_aNIq3WuzqSVdBHeI6Gn7idW5P6LeVtetKNp13R-c009bDD79bnZjO_SuyRm0p_fD62wUmDy9zA9hFJI0fByLdhI"/>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide text-on-surface shadow-sm">edX</div>
+</div>
+<div class="p-6 flex flex-col gap-4 flex-grow">
+<h3 class="text-xl font-bold text-on-surface tracking-tight leading-snug">Hardware for AI Deployment</h3>
+<p class="text-on-surface-variant text-sm flex-grow">Optimize models for edge computing and bespoke silicon environments.</p>
+<div class="flex justify-between items-end mt-2">
+<div class="flex items-center gap-1 text-xs font-bold text-on-surface">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.6
+                            </div>
+<div class="text-lg font-bold text-on-surface">Free</div>
+</div>
+</div>
+</article>
+<!-- Small Info Block -->
+<article class="md:col-span-4 bg-surface-container-high rounded-xl p-8 flex flex-col justify-center items-center text-center ghost-border border border-outline-variant/30">
+<span class="material-symbols-outlined text-4xl text-primary mb-4" style="font-variation-settings: 'wght' 200;">model_training</span>
+<h3 class="text-lg font-bold text-on-surface mb-2">Can't find it?</h3>
+<p class="text-sm text-on-surface-variant mb-6">Request a specialized curriculum milled to your exact organizational needs.</p>
+<button class="px-6 py-2 rounded-lg text-primary font-bold hover:bg-surface-container-highest transition-colors ghost-border bg-surface-container-lowest">
+                        Request Track
+                    </button>
+</article>
+</div>
+</section>
+</main>
+</body></html>

@@ -22,7 +22,13 @@
     <!-- Course Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="recommendations-grid">
         {% for course in recommendations %}
-        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="rec-card-{{ loop.index0 }}">
+        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up relative" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="rec-card-{{ loop.index0 }}">
+            {% if loop.first %}
+            <div class="absolute top-1 {{ 'left-0 rounded-br-xl' if lang == 'ar' else 'right-0 rounded-bl-xl' }} z-20 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 font-black text-[10px] uppercase tracking-widest shadow-md flex items-center gap-1.5">
+                <i class="fa-solid fa-crown text-[10px]"></i>
+                Best Match
+            </div>
+            {% endif %}
             <!-- Top accent bar -->
             <div class="h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-accent-500"></div>
 

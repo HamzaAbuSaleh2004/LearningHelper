@@ -36,7 +36,7 @@
             <!-- Options -->
             <div class="space-y-2">
                 {% for option in q.options %}
-                <label class="option-label flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-all group"
+                <label class="option-label flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/20 cursor-pointer hover:bg-surface-container-high hover:border-primary-500/30 transition-all group"
                        for="q{{ qi }}_{{ loop.index0 }}">
                     <input type="radio" name="q{{ qi }}" value="{{ loop.index0 }}"
                            id="q{{ qi }}_{{ loop.index0 }}"
