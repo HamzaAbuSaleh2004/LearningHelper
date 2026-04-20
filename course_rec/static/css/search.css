@@ -1,0 +1,7 @@
+/* search.css */
+/* Course title is always visible */
+.result-card .course-title {
+    opacity: 1 !important;
+    transform: none !important;
+    color: #0058bc !important;
+}

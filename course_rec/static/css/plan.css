@@ -1,0 +1,21 @@
+/* plan.css */
+/* Make the study plan titles visible */
+.plan-course-title {
+    color: #191c1d !important;
+    font-weight: 800;
+}
+
+/* Checklist item names fix */
+.checklist-item h4:not(.line-through) {
+    color: #191c1d !important;
+}
+
+/* Ensure white text remapping doesn't hide essential labels */
+#progress-section .text-white {
+    color: #191c1d !important;
+}
+
+/* Checklist hover state */
+.checklist-item:hover h4:not(.line-through) {
+    color: #0058bc !important;
+}

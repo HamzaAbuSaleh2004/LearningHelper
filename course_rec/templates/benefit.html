@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ t('benefit_title') }} — {{ t('app_name') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/benefit.css') }}"/>
+{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto animate-fade-in">

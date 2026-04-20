@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Login — {{ t('app_name') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"/>
+{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto animate-fade-in">

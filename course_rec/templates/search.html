@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ t('search_title') }} — {{ t('app_name') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}"/>
+{% endblock %}
 
 {% block content %}
 <div class="animate-fade-in">
@@ -63,7 +66,7 @@
     <!-- Results Grid -->
     <div class="max-w-5xl mx-auto space-y-4" id="search-results">
         {% for course in recommendations %}
-        <div class="glass-card hover-lift overflow-hidden animate-fade-in-up relative" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="result-{{ loop.index0 }}">
+        <div class="glass-card result-card hover-lift overflow-hidden animate-fade-in-up relative" style="animation-delay: {{ loop.index0 * 0.08 }}s" id="result-{{ loop.index0 }}">
             {% if loop.first %}
             <div class="absolute top-0 {{ 'left-0 rounded-br-xl' if lang == 'ar' else 'right-0 rounded-bl-xl' }} z-20 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 font-black text-[11px] uppercase tracking-widest shadow-md flex items-center gap-1.5">
                 <i class="fa-solid fa-crown text-[11px]"></i>
@@ -87,8 +90,8 @@
                 <div class="flex-1 p-5">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1 min-w-0">
-                             <a href="{{ url_for('course_detail', course_id=course.id) }}" class="hover:text-primary-300 transition-colors">
-                                 <h3 class="text-base font-bold text-white mb-2">{{ course.course_title }}</h3>
+                             <a href="{{ url_for('course_detail', course_id=course.id) }}" class="course-title-link">
+                                  <h3 class="course-title font-bold mb-2">{{ course.course_title }}</h3>
                              </a>
                             <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
                                 <span class="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-bold uppercase tracking-wider text-[10px]">

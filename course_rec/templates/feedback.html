@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ t('feedback_title') }} — {{ t('app_name') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}"/>
+{% endblock %}
 
 {% block content %}
 <div class="max-w-xl mx-auto animate-fade-in">
@@ -19,7 +22,7 @@
                 <i class="fa-solid {{ category_icons.get(course.category, 'fa-book') }} text-primary-400 text-xl"></i>
             </div>
             <div class="flex-1 min-w-0">
-                <h3 class="text-base font-bold text-white mb-1">{{ course.title }}</h3>
+                <h3 class="course-title text-base font-bold mb-1">{{ course.title }}</h3>
                 <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
                     <span class="px-2 py-0.5 rounded-md {% if course.platform == 'coursera' %}bg-blue-500/20 text-blue-300{% else %}bg-purple-500/20 text-purple-300{% endif %} font-bold uppercase tracking-wider">
                         {{ course.platform }}

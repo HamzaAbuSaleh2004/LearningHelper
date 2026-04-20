@@ -1,0 +1,189 @@
+/* ─── Base ─── */
+body {
+  font-family: 'Inter', 'Tajawal', sans-serif;
+  background-color: #f8f9fa;
+  color: #191c1d;
+}
+
+/* ─── Stitch Design System Classes ─── */
+.ghost-border { box-shadow: inset 0 0 0 1px rgba(193, 198, 215, 0.25); }
+.ambient-shadow { box-shadow: 0 32px 64px rgba(25, 28, 29, 0.04); }
+.pulse-border {
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #0058bc, #006e2c) border-box;
+}
+
+/* ─── Remap legacy dark-theme helper classes ─── */
+.glass-card {
+  background: #ffffff;
+  border: 1px solid rgba(193, 198, 215, 0.25);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 24px rgba(25, 28, 29, 0.04);
+}
+.glass-card-strong {
+  background: #ffffff;
+  border: 1px solid rgba(193, 198, 215, 0.35);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(25, 28, 29, 0.06);
+}
+.gradient-text {
+  background: linear-gradient(135deg, #0058bc, #0070eb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gradient-text-accent {
+  background: linear-gradient(135deg, #006e2c, #00a846);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 88, 188, 0.08);
+}
+
+/* ─── Remap dark Tailwind text utilities to light equivalents ─── */
+/* Applied broadly — preserved for explicit colored elements below */
+.text-white { color: #191c1d !important; }
+.text-slate-100, .text-slate-200 { color: #191c1d !important; }
+.text-slate-300 { color: #414755 !important; }
+.text-slate-400 { color: #414755 !important; }
+.text-slate-500 { color: #717786 !important; }
+.text-slate-600 { color: #414755 !important; }
+
+/* Preserve white text on gradient/colored backgrounds */
+[class*="from-primary-5"].text-white,
+[class*="from-primary-6"].text-white,
+[class*="from-accent-5"].text-white,
+[class*="from-accent-6"].text-white,
+.bg-gradient-to-r.text-white,
+.bg-gradient-to-br.text-white,
+.bg-primary-500.text-white,
+.bg-primary-600.text-white,
+.bg-accent-500.text-white { color: #ffffff !important; }
+
+/* Child elements of gradient containers stay white */
+[class*="from-primary-5"] .text-white,
+[class*="from-primary-6"] .text-white,
+[class*="from-accent-5"] .text-white,
+[class*="from-accent-6"] .text-white,
+.bg-gradient-to-r .text-white,
+.bg-gradient-to-br .text-white { color: #ffffff !important; }
+
+/* ─── Remap dark background utilities ─── */
+.bg-white\/5  { background-color: #f3f4f5 !important; }
+.bg-white\/8  { background-color: #edeeef !important; }
+.bg-white\/10 { background-color: #e7e8e9 !important; }
+.bg-white\/12 { background-color: #e1e3e4 !important; }
+.bg-black\/20 { background-color: #f3f4f5 !important; }
+
+/* ─── Remap dark border utilities ─── */
+.border-white\/5  { border-color: rgba(113, 119, 134, 0.15) !important; }
+.border-white\/10 { border-color: rgba(113, 119, 134, 0.25) !important; }
+.border-white\/15 { border-color: rgba(113, 119, 134, 0.35) !important; }
+.border-white\/20 { border-color: rgba(113, 119, 134, 0.45) !important; }
+.border-white\/25 { border-color: rgba(113, 119, 134, 0.55) !important; }
+.border-white\/30 { border-color: rgba(113, 119, 134, 0.65) !important; }
+
+/* ─── Checkbox toggle buttons (plan.html) use text-transparent until checked — give it a visible outline ─── */
+button.text-transparent { color: #c1c6d7; }
+button.text-transparent:hover { color: #0058bc; }
+
+/* ─── Form controls visibility ─── */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: #0058bc;
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="search"],
+input[type="number"], textarea, select {
+  color: #191c1d;
+  background-color: #ffffff;
+}
+input::placeholder, textarea::placeholder { color: #717786; opacity: 1; }
+
+/* ─── Remap primary color variants (indigo → blue #0058bc) ─── */
+.text-primary-300 { color: #4088e7 !important; }
+.text-primary-400 { color: #0070eb !important; }
+.text-primary-500 { color: #0058bc !important; }
+.text-accent-300  { color: #33a85f !important; }
+.text-accent-400  { color: #006e2c !important; }
+.text-accent-500  { color: #006e2c !important; }
+
+/* Global Course Title - Always Visible */
+.course-title {
+  color: #0058bc !important; /* Premium Blue */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f3f4f5; }
+::-webkit-scrollbar-thumb { background: #c1c6d7; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #0058bc; }
+
+/* ─── Progress bar ─── */
+.progress-fill { transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ─── Badge states ─── */
+.badge-earned { box-shadow: 0 0 0 2px rgba(0, 88, 188, 0.15), 0 4px 16px rgba(0, 88, 188, 0.1); }
+.badge-locked { filter: grayscale(1); opacity: 0.35; }
+
+/* ─── Typewriter ─── */
+.typewriter {
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid #0058bc;
+  animation: typing 3s steps(30) 1s forwards, blink 0.75s step-end infinite;
+  width: 0;
+}
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink  { 50% { border-color: transparent } }
+
+/* ─── Mobile nav ─── */
+.mobile-nav { display: none; }
+@media (max-width: 768px) {
+  .desktop-sidebar { display: none !important; }
+  .mobile-nav { display: flex; }
+  .main-content { margin-left: 0 !important; }
+}
+
+/* ─── Scroll animations ─── */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-animate.visible {
+  opacity: 1;
+  transform: none;
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── ARIA Robot Companion ─── */
+#aria-stage-wrapper {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 170px;
+  z-index: 999;
+  pointer-events: none;
+}
+#aria-stage-wrapper #aria-stage,
+#aria-stage-wrapper #aria-robot { pointer-events: auto; }
+#aria-hud, #aria-streak { display: none !important; }
+#aria-bubble {
+  box-shadow: 0 8px 32px rgba(25, 28, 29, 0.12);
+  border: 1px solid rgba(193, 198, 215, 0.25);
+}
+@media (max-width: 768px) {
+  #aria-stage-wrapper { bottom: 76px; width: 130px; }
+  #aria-stage { height: 180px !important; }
+}

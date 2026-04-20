@@ -1,0 +1,16 @@
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+  color: #e2e8f0; font-weight: 600; margin: 0.75rem 0 0.4rem;
+}
+.markdown-content h2 { font-size: 1rem; }
+.markdown-content h3 { font-size: 0.9rem; color: #a5b4fc; }
+.markdown-content ul, .markdown-content ol {
+  padding-left: 1.25rem; margin: 0.4rem 0;
+}
+.markdown-content li { margin: 0.2rem 0; color: #cbd5e1; }
+.markdown-content strong { color: #c7d2fe; }
+.markdown-content code {
+  background: rgba(255,255,255,0.1); padding: 0.1rem 0.35rem;
+  border-radius: 4px; font-size: 0.8rem; color: #6ee7b7;
+}
+.markdown-content p { margin: 0.3rem 0; }
+.markdown-content a { color: #818cf8; text-decoration: underline; }

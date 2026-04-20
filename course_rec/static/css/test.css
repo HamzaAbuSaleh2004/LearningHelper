@@ -1,0 +1,13 @@
+@keyframes correctPulse {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(29,158,117,0); }
+  50%       { box-shadow: 0 0 0 6px rgba(29,158,117,0.4); }
+}
+@keyframes wrongShake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-8px); }
+  40%     { transform: translateX(8px); }
+  60%     { transform: translateX(-5px); }
+  80%     { transform: translateX(5px); }
+}
+.answer-correct { animation: correctPulse 0.5s ease 2; }
+.answer-wrong   { animation: wrongShake 0.4s ease; }

@@ -1,0 +1,15 @@
+/* enroll.css */
+/* Make the course name visible and highlight it */
+.enroll-course-title {
+    color: #4088e7 !important; /* primary-400 */
+    font-weight: 700;
+}
+
+/* Schedule options text fix */
+#schedule-options .text-white {
+    color: #191c1d !important;
+}
+
+#schedule-options label:hover .text-white {
+    color: #0058bc !important;
+}

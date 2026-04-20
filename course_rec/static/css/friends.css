@@ -1,0 +1,7 @@
+/* friends.css */
+/* Collaboration Tracker: Course title is always visible */
+.collaboration-card .course-title {
+    opacity: 1 !important;
+    transform: none !important;
+    color: #0058bc !important;
+}

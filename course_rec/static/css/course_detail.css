@@ -1,0 +1,21 @@
+/* course_detail.css */
+/* Make main course title visible */
+.course-detail-title {
+    color: #191c1d !important;
+    font-weight: 800;
+}
+
+/* Fix visibility for other white text elements on bright backgrounds */
+.text-white {
+    color: #191c1d !important;
+}
+
+/* Progress bar labels */
+.text-primary-400 {
+    color: #0058bc !important;
+}
+
+/* Ensure course description titles are visible */
+.prose h3 {
+    color: #191c1d !important;
+}

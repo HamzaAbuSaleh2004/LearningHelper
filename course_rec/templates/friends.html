@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Friends — {{ t('app_name') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/friends.css') }}"/>
+{% endblock %}
 
 {% block content %}
 <div class="animate-fade-in space-y-8">
@@ -59,10 +62,10 @@
                 {% if collaborations %}
                 <div class="space-y-4">
                     {% for col in collaborations %}
-                    <a href="{{ url_for('course_detail', course_id=col.course_id) }}" class="block p-4 glass-card-strong border-l-4 border-primary-500 hover:border-primary-400 hover:bg-white/5 transition-all group">
+                    <a href="{{ url_for('course_detail', course_id=col.course_id) }}" class="block p-4 glass-card-strong border-l-4 border-primary-500 hover:border-primary-400 hover:bg-white/5 transition-all group collaboration-card">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                             <div>
-                                <h4 class="text-sm font-bold text-white group-hover:text-primary-300 transition-colors">{{ col.course_title }}</h4>
+                                <h4 class="course-title text-sm font-bold transition-colors">{{ col.course_title }}</h4>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="text-[10px] text-slate-400">Collaborating with: <span class="text-primary-300 font-bold">{{ col.partner_name }}</span></span>
                                     <span class="px-1.5 py-0.5 rounded bg-white/5 text-slate-500 text-[8px] uppercase tracking-tighter">{{ col.role }}</span>

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ t('app_name') }} — {{ t('app_tagline') }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+{% endblock %}
 
 {% block content %}
 {% if user %}
@@ -28,7 +31,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-xs text-primary-300 font-semibold mb-0.5">Currently Learning</p>
-                <h3 class="text-base font-bold text-white truncate">{{ active_enr.course_title }}</h3>
+                <h3 class="course-title text-base font-bold truncate">{{ active_enr.course_title }}</h3>
                 {% set plan = active_enr.study_plan %}
                 {% set done = plan|selectattr('checked')|list|length %}
                 {% set total_items = plan|length %}
@@ -208,13 +211,13 @@
                     {% set done = plan|selectattr('checked')|list|length %}
                     {% set total_items = plan|length %}
                     {% set pct = ((done / total_items) * 100)|round|int if total_items > 0 else 0 %}
-                    <a href="{{ url_for('plan', enrollment_id=enr.id) }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group">
+                    <a href="{{ url_for('plan', enrollment_id=enr.id) }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group enrolled-course-item">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
                             {% if enr.completed %}bg-accent-500/20 text-accent-400{% else %}bg-primary-500/20 text-primary-400{% endif %}">
                             {% if enr.completed %}<i class="fa-solid fa-check text-xs"></i>{% else %}<i class="fa-solid fa-book-open text-xs"></i>{% endif %}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-slate-300 truncate group-hover:text-white transition-colors">{{ enr.course_title }}</p>
+                            <p class="course-title text-sm font-medium truncate transition-colors">{{ enr.course_title }}</p>
                             <div class="flex items-center gap-2 mt-1">
                                 <div class="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
                                     <div class="h-full rounded-full {% if enr.completed %}bg-accent-500{% else %}bg-primary-500{% endif %}" style="width: {{ pct }}%"></div>

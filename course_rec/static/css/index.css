@@ -1,0 +1,11 @@
+/* index.css */
+/* Radar chart canvas */
+#radarChart { max-width: 300px; max-height: 300px; }
+
+/* Course title is always visible */
+#active-course-banner .course-title,
+.enrolled-course-item .course-title {
+    opacity: 1 !important;
+    transform: none !important;
+    color: #0058bc !important;
+}
